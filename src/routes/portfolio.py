@@ -8,6 +8,10 @@ import os
 
 print("FILE PRESENTI IN SRC:", os.listdir("/app/src"))
 
+print("DEBUG → import data_access:", carica_portafoglio_da_csv)
+print("DEBUG → import market_api:", get_price)
+
+
 portfolio_bp = Blueprint("portfolio", __name__)
 
 @portfolio_bp.route("/")
