@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template
-from data_access import carica_portafoglio_da_csv
+from src.data_access import carica_portafoglio_da_csv
 
 portfolio_bp = Blueprint("portfolio", __name__)
 
