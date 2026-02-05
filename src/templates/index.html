@@ -1,14 +1,3 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-    <meta charset="UTF-8">
-    <title>Portafoglio Titoli</title>
-    <link rel="stylesheet" href="/static/style.css">
-</head>
-<body>
-
-<h1>📈 Portafoglio Titoli</h1>
-
 <table>
     <thead>
         <tr>
@@ -16,6 +5,8 @@
             <th>Nome</th>
             <th>Quantità</th>
             <th>Prezzo Carico</th>
+            <th>Prezzo Attuale</th>
+            <th>Gain/Loss %</th>
         </tr>
     </thead>
     <tbody>
@@ -25,10 +16,25 @@
             <td>{{ t.nome }}</td>
             <td>{{ t.quantita }}</td>
             <td>{{ t.prezzo_carico }} €</td>
+
+            <td>
+                {% if t.prezzo_attuale %}
+                    {{ t.prezzo_attuale }} €
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+
+            <td>
+                {% if t.gain_loss %}
+                    <span style="color: {{ 'green' if t.gain_loss >= 0 else 'red' }}">
+                        {{ t.gain_loss | round(2) }} %
+                    </span>
+                {% else %}
+                    -
+                {% endif %}
+            </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
-
-</body>
-</html>
