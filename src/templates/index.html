@@ -1,40 +1,44 @@
-<table>
-    <thead>
-        <tr>
-            <th>ISIN</th>
-            <th>Nome</th>
-            <th>Quantità</th>
-            <th>Prezzo Carico</th>
-            <th>Prezzo Attuale</th>
-            <th>Gain/Loss %</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for t in titoli %}
-        <tr>
-            <td>{{ t.isin }}</td>
-            <td>{{ t.nome }}</td>
-            <td>{{ t.quantita }}</td>
-            <td>{{ t.prezzo_carico }} €</td>
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Portafoglio</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
 
-            <td>
-                {% if t.prezzo_attuale %}
-                    {{ t.prezzo_attuale }} €
-                {% else %}
-                    -
-                {% endif %}
-            </td>
+    <header>
+        <h1>📈 Il tuo portafoglio</h1>
+    </header>
 
-            <td>
-                {% if t.gain_loss %}
-                    <span style="color: {{ 'green' if t.gain_loss >= 0 else 'red' }}">
-                        {{ t.gain_loss | round(2) }} %
-                    </span>
-                {% else %}
-                    -
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+    <div class="container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Titolo</th>
+                    <th>Quantità</th>
+                    <th>Prezzo Medio</th>
+                    <th>Prezzo Attuale</th>
+                    <th>Valore</th>
+                    <th>Gain/Loss</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for riga in portafoglio %}
+                <tr>
+                    <td>{{ riga['symbol'] }}</td>
+                    <td>{{ riga['quantity'] }}</td>
+                    <td>{{ riga['avg_price'] }}</td>
+                    <td>{{ riga['current_price'] }}</td>
+                    <td>{{ riga['value'] }}</td>
+                    <td class="{% if riga['gain'] >= 0 %}gain{% else %}loss{% endif %}">
+                        {{ riga['gain'] }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>
