@@ -1,22 +1,24 @@
 import requests
+import os
+
+API_KEY = os.getenv("TWELVEDATA_API_KEY")
 
 def get_price(symbol):
     """
-    Recupera il prezzo attuale del titolo usando Yahoo Finance.
+    Recupera il prezzo attuale usando TwelveData.
     Ritorna None se il prezzo non è disponibile.
     """
 
-    url = f"https://query1.finance.yahoo.com/v7/finance/quote?symbols={symbol}"
+    url = f"https://api.twelvedata.com/price?symbol={symbol}&apikey={API_KEY}"
 
     try:
         response = requests.get(url, timeout=5)
         data = response.json()
 
-        result = data["quoteResponse"]["result"]
-        if not result:
-            return None
+        if "price" in data:
+            return float(data["price"])
 
-        return result[0].get("regularMarketPrice", None)
+        return None
 
     except Exception:
         return None
