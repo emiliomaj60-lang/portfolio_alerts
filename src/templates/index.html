@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Portafoglio Titoli</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<h1>📈 Portafoglio Titoli</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>ISIN</th>
+            <th>Nome</th>
+            <th>Quantità</th>
+            <th>Prezzo Carico</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for t in titoli %}
+        <tr>
+            <td>{{ t.isin }}</td>
+            <td>{{ t.nome }}</td>
+            <td>{{ t.quantita }}</td>
+            <td>{{ t.prezzo_carico }} €</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+</body>
+</html>
