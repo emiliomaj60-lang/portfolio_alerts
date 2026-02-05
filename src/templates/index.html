@@ -12,6 +12,10 @@
     </header>
 
     <div class="container">
+
+        <!-- Debug temporaneo: rimuovere quando tutto funziona -->
+        <!-- <pre>{{ portafoglio }}</pre> -->
+
         <table>
             <thead>
                 <tr>
@@ -26,13 +30,13 @@
             <tbody>
                 {% for riga in portafoglio %}
                 <tr>
-                    <td>{{ riga['symbol'] }}</td>
-                    <td>{{ riga['quantity'] }}</td>
-                    <td>{{ riga['avg_price'] }}</td>
-                    <td>{{ riga['current_price'] }}</td>
-                    <td>{{ riga['value'] }}</td>
-                    <td class="{% if riga['gain'] >= 0 %}gain{% else %}loss{% endif %}">
-                        {{ riga['gain'] }}
+                    <td>{{ riga.symbol }}</td>
+                    <td>{{ riga.quantity }}</td>
+                    <td>{{ riga.avg_price }}</td>
+                    <td>{{ riga.current_price }}</td>
+                    <td>{{ riga.value }}</td>
+                    <td class="{% if riga.gain >= 0 %}gain{% else %}loss{% endif %}">
+                        {{ riga.gain }}
                     </td>
                 </tr>
                 {% endfor %}
