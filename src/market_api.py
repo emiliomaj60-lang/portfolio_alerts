@@ -18,6 +18,9 @@ def get_price(symbol):
         response = requests.get(url, timeout=5)
         data = response.json()
 
+        print("DEBUG → URL:", url)
+        print("DEBUG → RESPONSE:", data)
+
         if "price" in data:
             return float(data["price"])
 
