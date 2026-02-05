@@ -6,7 +6,6 @@ API_KEY = os.getenv("RAPIDAPI_KEY")
 print("DEBUG → API_KEY:", API_KEY)
 
 def get_price(symbol):
-    # Endpoint della tua API Yahoo Finance Real Time
     url = "https://yahoo-finance-real-time1.p.rapidapi.com/stock/get-options"
 
     params = {
@@ -27,10 +26,14 @@ def get_price(symbol):
         print("DEBUG → URL:", response.url)
         print("DEBUG → RESPONSE:", data)
 
-        # Questa API NON restituisce direttamente il prezzo.
-        # Dobbiamo estrarlo dal campo "underlying" → "regularMarketPrice"
-        if "underlying" in data and "regularMarketPrice" in data["underlying"]:
-            return float(data["underlying"]["regularMarketPrice"])
+        # Estrarre il prezzo dal percorso corretto
+        chain = data.get("optionChain", {})
+        result = chain.get("result", [])
+
+        if result and "quote" in result[0]:
+            quote = result[0]["quote"]
+            if "regularMarketPrice" in quote:
+                return float(quote["regularMarketPrice"])
 
         return None
 
