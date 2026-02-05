@@ -26,6 +26,8 @@ def index():
         if "." not in symbol:
             symbol = symbol + ".MI"
 
+        print("DEBUG → chiamata API:", symbol, get_price(symbol))
+
         t.prezzo_attuale = get_price(symbol)
 
         if t.prezzo_attuale:
