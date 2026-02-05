@@ -3,6 +3,9 @@ import os
 
 API_KEY = os.getenv("TWELVEDATA_API_KEY")
 
+print("DEBUG → API_KEY:", API_KEY)
+
+
 def get_price(symbol):
     """
     Recupera il prezzo attuale usando TwelveData.
