@@ -7,16 +7,17 @@ from market_api import get_price
 import os
 
 print("FILE PRESENTI IN SRC:", os.listdir("/app/src"))
-
 print("DEBUG → import data_access:", carica_portafoglio_da_csv)
 print("DEBUG → import market_api:", get_price)
-
 
 portfolio_bp = Blueprint("portfolio", __name__)
 
 @portfolio_bp.route("/")
 def index():
+    # Carica il portafoglio dal CSV
     portafoglio = carica_portafoglio_da_csv("data/portfolio.csv")
+
+    # Ottieni la lista dei titoli (oggetti)
     titoli = portafoglio.lista_titoli()
 
     for t in titoli:
@@ -26,13 +27,18 @@ def index():
         if "." not in symbol:
             symbol = symbol + ".MI"
 
-        print("DEBUG → chiamata API:", symbol, get_price(symbol))
+        # Chiamata API
+        prezzo = get_price(symbol)
+        print("DEBUG → chiamata API:", symbol, prezzo)
 
-        t.prezzo_attuale = get_price(symbol)
+        # Salva il prezzo attuale nell’oggetto
+        t.prezzo_attuale = prezzo
 
-        if t.prezzo_attuale:
-            t.gain_loss = ((t.prezzo_attuale - t.prezzo_carico) / t.prezzo_carico) * 100
+        # Calcolo gain/loss percentuale
+        if prezzo:
+            t.gain_loss = ((prezzo - t.prezzo_carico) / t.prezzo_carico) * 100
         else:
             t.gain_loss = None
 
-    return render_template("index.html", titoli=titoli)
+    # 🔥 QUI ERA IL PROBLEMA: ora passiamo la variabile giusta
+    return render_template("index.html", portafoglio=titoli)
