@@ -8,14 +8,13 @@ def api_portafoglio():
     portafoglio = carica_portafoglio_da_csv("data/portfolio.csv")
     titoli = portafoglio.lista_titoli()
 
-    data = []
-    for t in titoli:
-        data.append({
+    return jsonify([
+        {
             "isin": t.isin,
             "symbol": t.symbol,
             "nome": t.nome,
             "quantita": t.quantita,
             "prezzo_carico": t.prezzo_carico
-        })
-
-    return jsonify(data)
+        }
+        for t in titoli
+    ])
