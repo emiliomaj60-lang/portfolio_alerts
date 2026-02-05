@@ -1,8 +1,12 @@
 from flask import Blueprint, render_template
 
-# Import dai moduli nella stessa cartella "src"
+# Import corretti per Railway (che esegue dentro /app/src)
 from data_access import carica_portafoglio_da_csv
 from market_api import get_price
+
+import os
+
+print("FILE PRESENTI IN SRC:", os.listdir("/app/src"))
 
 portfolio_bp = Blueprint("portfolio", __name__)
 
@@ -14,7 +18,7 @@ def index():
     for t in titoli:
         symbol = t.symbol
 
-        # Per titoli italiani, se non c'è un punto, aggiungo .MI
+        # Per titoli italiani, aggiungiamo .MI se manca
         if "." not in symbol:
             symbol = symbol + ".MI"
 
