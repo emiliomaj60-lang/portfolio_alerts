@@ -6,23 +6,31 @@ API_KEY = os.getenv("RAPIDAPI_KEY")
 print("DEBUG → API_KEY:", API_KEY)
 
 def get_price(symbol):
-    url = f"https://yahoo-finance15.p.rapidapi.com/api/yahoo/qu/quote/{symbol}"
+    # Endpoint della tua API Yahoo Finance Real Time
+    url = "https://yahoo-finance-real-time1.p.rapidapi.com/stock/get-options"
+
+    params = {
+        "symbol": symbol,
+        "lang": "en-US",
+        "region": "US"
+    }
 
     headers = {
         "x-rapidapi-key": API_KEY,
-        "x-rapidapi-host": "yahoo-finance15.p.rapidapi.com"
+        "x-rapidapi-host": "yahoo-finance-real-time1.p.rapidapi.com"
     }
 
     try:
-        response = requests.get(url, headers=headers, timeout=5)
+        response = requests.get(url, headers=headers, params=params, timeout=5)
         data = response.json()
 
-        print("DEBUG → URL:", url)
+        print("DEBUG → URL:", response.url)
         print("DEBUG → RESPONSE:", data)
 
-        # La risposta è una lista con un singolo elemento
-        if isinstance(data, list) and len(data) > 0:
-            return float(data[0]["regularMarketPrice"])
+        # Questa API NON restituisce direttamente il prezzo.
+        # Dobbiamo estrarlo dal campo "underlying" → "regularMarketPrice"
+        if "underlying" in data and "regularMarketPrice" in data["underlying"]:
+            return float(data["underlying"]["regularMarketPrice"])
 
         return None
 
