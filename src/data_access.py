@@ -1,5 +1,10 @@
 import csv
+from models import Titolo, Portafoglio
 
+
+# ---------------------------------------------------------
+#  CARICA COSTI DI GESTIONE (acquisto + vendita)
+# ---------------------------------------------------------
 def carica_costi_gestione(path="data/costi_gestione.csv"):
     with open(path, newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
@@ -12,8 +17,10 @@ def carica_costi_gestione(path="data/costi_gestione.csv"):
             "commissioni_vendita": float(row["commissioni_vendita"])
         }
 
-from models import Titolo, Portafoglio
 
+# ---------------------------------------------------------
+#  CARICA PORTAFOGLIO (CSV PULITO)
+# ---------------------------------------------------------
 def carica_portafoglio_da_csv(percorso_file):
     portafoglio = Portafoglio()
 
@@ -27,10 +34,9 @@ def carica_portafoglio_da_csv(percorso_file):
                 nome=row["nome"],
                 quantita=row["quantita"],
                 prezzo_carico=row["prezzo_carico"],
-                spese_commissioni=row["spese_commissioni"],
-                spese_fisse=row["spese_fisse"],
                 data_acquisto=row["data_acquisto"]
             )
+
             portafoglio.aggiungi_titolo(titolo)
 
     return portafoglio
