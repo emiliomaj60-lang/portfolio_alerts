@@ -1,22 +1,26 @@
 from flask import Blueprint, render_template, jsonify
-from data_access import carica_portafoglio_da_csv, carica_costi_gestione
+from data_access import (
+    carica_portafoglio_da_csv,
+    carica_costi_gestione,
+    carica_prezzi_attuali,
+    salva_prezzi_attuali
+)
 from market_api import get_price
 from datetime import datetime
 import os
 
 portfolio_bp = Blueprint("portfolio", __name__)
 
+
 # ---------------------------------------------------------
 #  FUNZIONI PER GESTIRE L’ULTIMO AGGIORNAMENTO
 # ---------------------------------------------------------
 
 def salva_ultimo_aggiornamento():
-    """Salva la data/ora dell’ultimo aggiornamento prezzi."""
     with open("data/ultimo_aggiornamento.txt", "w") as f:
         f.write(datetime.now().strftime("%d/%m/%Y %H:%M"))
 
 def leggi_ultimo_aggiornamento():
-    """Legge la data/ora dell’ultimo aggiornamento."""
     try:
         with open("data/ultimo_aggiornamento.txt", "r") as f:
             return f.read().strip()
@@ -32,9 +36,13 @@ def index():
     portafoglio = carica_portafoglio_da_csv("data/portfolio.csv")
     titoli = portafoglio.lista_titoli()
 
-    # ❌ NON aggiorniamo automaticamente i prezzi
-    # ❌ NON chiamiamo RapidAPI qui
-    # I prezzi rimangono quelli salvati nell’ultimo aggiornamento
+    # 🔵 Carichiamo i prezzi salvati
+    prezzi_salvati = carica_prezzi_attuali()
+
+    # 🔵 Applichiamo i prezzi ai titoli
+    for t in titoli:
+        if t.symbol in prezzi_salvati:
+            t.prezzo_attuale = prezzi_salvati[t.symbol]
 
     ultimo_agg = leggi_ultimo_aggiornamento()
 
@@ -66,15 +74,19 @@ def aggiorna_tutti():
     portafoglio = carica_portafoglio_da_csv("data/portfolio.csv")
     titoli = portafoglio.lista_titoli()
 
+    prezzi = {}
+
     for t in titoli:
         api_symbol = t.symbol if "." in t.symbol else t.symbol + ".MI"
         prezzo = get_price(api_symbol)
-        t.prezzo_attuale = prezzo
+        prezzi[t.symbol] = prezzo
 
-    # 🔥 Salviamo l’ora dell’aggiornamento
+    # 🔵 Salviamo i prezzi aggiornati
+    salva_prezzi_attuali(prezzi)
+
+    # 🔵 Salviamo l’ora dell’aggiornamento
     salva_ultimo_aggiornamento()
 
-    # Torniamo alla homepage
     return jsonify({"status": "ok"})
 
 
@@ -91,7 +103,7 @@ def scheda(symbol):
     if not titolo:
         return "Titolo non trovato", 404
 
-    # 🔥 Recuperiamo il prezzo attuale (solo quando apri la scheda)
+    # 🔵 Recuperiamo il prezzo attuale (solo quando apri la scheda)
     api_symbol = symbol if "." in symbol else symbol + ".MI"
     prezzo_attuale = get_price(api_symbol)
     titolo.prezzo_attuale = prezzo_attuale
