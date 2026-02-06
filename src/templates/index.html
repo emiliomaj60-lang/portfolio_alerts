@@ -69,9 +69,15 @@
 <div class="container">
 
     <!-- 🔴 AVVISO DATI NON AGGIORNATI -->
-    <div class="update-warning">
-        ⚠ I dati potrebbero non essere aggiornati — premi “Aggiorna Tutti”
+{% if ultimo_aggiornamento != "Mai aggiornato" %}
+    <div class="update-success" id="badgeAggiornato" style="display:none;">
+        🟢 Dati aggiornati
     </div>
+{% endif %}
+
+<div class="update-warning" id="badgeNonAggiornato">
+    ⚠ I dati potrebbero non essere aggiornati — premi “Aggiorna Tutti”
+</div>
 
     <!-- 🕒 ULTIMO AGGIORNAMENTO -->
     <div class="last-update">
