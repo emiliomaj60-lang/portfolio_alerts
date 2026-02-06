@@ -28,24 +28,26 @@ header {
 }
 
 /* ----------------------------------------------------
-   TABELLA
+   TABELLA (+20% righe)
 ---------------------------------------------------- */
 table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 16px;
+    font-size: 19px; /* era 16px → +20% */
 }
 
 th {
     background: #e3f2fd;
-    padding: 12px;
+    padding: 15px; /* era 12px */
     text-align: left;
     border-bottom: 2px solid #90caf9;
+    font-size: 20px; /* leggermente più grande */
 }
 
 td {
-    padding: 10px;
+    padding: 14px; /* era 10px */
     border-bottom: 1px solid #ddd;
+    font-size: 19px; /* era 16px */
 }
 
 tr:hover {
@@ -66,7 +68,7 @@ tr:hover {
 }
 
 /* ----------------------------------------------------
-   BOTTONI
+   BOTTONI (+50% Aggiorna Tutti)
 ---------------------------------------------------- */
 .update-container {
     text-align: center;
@@ -74,13 +76,13 @@ tr:hover {
 }
 
 .refresh-all-btn {
-    padding: 12px 22px;
+    padding: 18px 30px; /* era 12px 22px */
     background: #1e88e5;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
-    font-size: 18px;
+    font-size: 27px; /* era 18px → +50% */
     font-weight: bold;
     transition: background 0.2s ease;
 }
@@ -116,11 +118,11 @@ tr:hover {
 }
 
 /* ----------------------------------------------------
-   BADGE STATO AGGIORNAMENTO
+   BADGE STATO AGGIORNAMENTO (+50%)
 ---------------------------------------------------- */
 .update-warning {
     text-align: center;
-    font-size: 20px;
+    font-size: 30px; /* era 20px */
     color: #c62828;
     margin-bottom: 10px;
     font-weight: bold;
@@ -128,18 +130,24 @@ tr:hover {
 
 .update-success {
     text-align: center;
-    font-size: 20px;
+    font-size: 30px; /* era 20px */
     color: #2e7d32;
     margin-bottom: 10px;
     font-weight: bold;
-}
-
-/* Badge animato (fade-in) */
-.update-success {
     opacity: 0;
     animation: fadeIn 0.8s forwards;
 }
 
+/* ----------------------------------------------------
+   ULTIMO AGGIORNAMENTO (+50%)
+---------------------------------------------------- */
+.last-update {
+    font-size: 30px; /* era ~20px */
+    text-align: center;
+    margin: 20px 0;
+}
+
+/* Badge animato (fade-in) */
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
