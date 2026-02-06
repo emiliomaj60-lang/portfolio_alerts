@@ -50,11 +50,21 @@ def salva_prezzi_attuali(prezzi, path="data/prezzi_attuali.csv"):
     """
     prezzi = { "BFF": 4.35, "ENEL": 6.12, ... }
     """
+
+    # Assicuriamoci che la cartella esista
+    cartella = os.path.dirname(path)
+    if cartella and not os.path.exists(cartella):
+        os.makedirs(cartella)
+
+    print("DEBUG → salvo prezzi:", prezzi)
+
     with open(path, "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
         writer.writerow(["symbol", "prezzo"])
+
         for symbol, prezzo in prezzi.items():
-            writer.writerow([symbol, prezzo])
+            if prezzo is not None:
+                writer.writerow([symbol, prezzo])
 
 
 # ---------------------------------------------------------
@@ -65,8 +75,10 @@ def carica_prezzi_attuali(path="data/prezzi_attuali.csv"):
         return {}
 
     prezzi = {}
+
     with open(path, newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
+
         for row in reader:
             try:
                 prezzi[row["symbol"]] = float(row["prezzo"])
