@@ -3,6 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Portafoglio</title>
+
+    <!-- 📱 ICONA PER HOME SCREEN (iPhone + Android) -->
+    <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- 📱 PWA SETTINGS -->
+    <meta name="theme-color" content="#1e88e5">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Portafoglio">
+
     <link rel="stylesheet" href="/static/style.css">
 
     <style>
@@ -23,10 +34,8 @@
                 });
         }
 
-        // Mostra il badge verde se l'aggiornamento è recente (< 60 sec)
         function mostraBadgeAggiornato() {
             const ultimo = "{{ ultimo_aggiornamento }}";
-
             if (ultimo === "Mai aggiornato") return;
 
             const parts = ultimo.split(" ");
