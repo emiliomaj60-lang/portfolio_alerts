@@ -79,16 +79,17 @@ def aggiorna_tutti():
     for t in titoli:
         api_symbol = t.symbol if "." in t.symbol else t.symbol + ".MI"
         prezzo = get_price(api_symbol)
+
+        # Salviamo il prezzo nel dizionario
         prezzi[t.symbol] = prezzo
 
-    # 🔵 Salviamo i prezzi aggiornati
+    # 🔵 Salviamo i prezzi aggiornati nel file CSV
     salva_prezzi_attuali(prezzi)
 
     # 🔵 Salviamo l’ora dell’aggiornamento
     salva_ultimo_aggiornamento()
 
     return jsonify({"status": "ok"})
-
 
 # ---------------------------------------------------------
 #  PAGINA SCHEDA RIASSUNTIVA
