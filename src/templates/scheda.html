@@ -97,12 +97,12 @@
 
         <tr>
             <th>N° Azioni</th>
-            <td>{{ titolo.quantita }}</td>
+            <td>{{ titolo.quantita|int }}</td>
         </tr>
 
         <tr>
             <th>Valore Totale Acquisto</th>
-            <td>{{ valore_acquisto | round(2) }} €</td>
+            <td>{{ valore_acquisto|round(0)|int }} €</td>
         </tr>
 
         <tr>
