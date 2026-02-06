@@ -94,8 +94,6 @@
     <table>
         <tr>
             <th>Nome</th>
-            <th>ISIN</th>
-            <th>Simbolo</th>
             <th>Quantità</th>
             <th>Prezzo Carico</th>
             <th>Prezzo Attuale</th>
@@ -106,15 +104,15 @@
         {% for t in portafoglio %}
         <tr>
             <td>{{ t.nome }}</td>
-            <td>{{ t.isin }}</td>
-            <td>{{ t.symbol }}</td>
+
             <td>{{ t.quantita|int }}</td>
-            <td>{{ t.prezzo_carico }} €</td>
+
+           <td>{{ t.prezzo_carico }} €</td>
 
             <td>
                 {% if t.prezzo_attuale %}
                     {{ t.prezzo_attuale }} €
-                {% else %}
+               {% else %}
                     <span style="color:#999;">n/d</span>
                 {% endif %}
             </td>
@@ -132,7 +130,7 @@
             </td>
 
             <td>
-                <a href="/scheda/{{ t.symbol }}" style="font-size:20px;">📄</a>
+                <a href="/scheda/{{ t.symbol }}" style="font-size:24px;">📄</a>
             </td>
         </tr>
         {% endfor %}
