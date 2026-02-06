@@ -1,16 +1,27 @@
 from flask import Blueprint, render_template, jsonify
-
-# Import corretti per Railway (che esegue dentro /app/src)
 from data_access import carica_portafoglio_da_csv, carica_costi_gestione
 from market_api import get_price
-
+from datetime import datetime
 import os
 
-print("FILE PRESENTI IN SRC:", os.listdir("/app/src"))
-print("DEBUG → import data_access:", carica_portafoglio_da_csv)
-print("DEBUG → import market_api:", get_price)
-
 portfolio_bp = Blueprint("portfolio", __name__)
+
+# ---------------------------------------------------------
+#  FUNZIONI PER GESTIRE L’ULTIMO AGGIORNAMENTO
+# ---------------------------------------------------------
+
+def salva_ultimo_aggiornamento():
+    """Salva la data/ora dell’ultimo aggiornamento prezzi."""
+    with open("data/ultimo_aggiornamento.txt", "w") as f:
+        f.write(datetime.now().strftime("%d/%m/%Y %H:%M"))
+
+def leggi_ultimo_aggiornamento():
+    """Legge la data/ora dell’ultimo aggiornamento."""
+    try:
+        with open("data/ultimo_aggiornamento.txt", "r") as f:
+            return f.read().strip()
+    except:
+        return "Mai aggiornato"
 
 
 # ---------------------------------------------------------
@@ -21,27 +32,17 @@ def index():
     portafoglio = carica_portafoglio_da_csv("data/portfolio.csv")
     titoli = portafoglio.lista_titoli()
 
-    for t in titoli:
-        symbol = t.symbol
+    # ❌ NON aggiorniamo automaticamente i prezzi
+    # ❌ NON chiamiamo RapidAPI qui
+    # I prezzi rimangono quelli salvati nell’ultimo aggiornamento
 
-        if "." not in symbol:
-            symbol = symbol + ".MI"
+    ultimo_agg = leggi_ultimo_aggiornamento()
 
-        prezzo = get_price(symbol)
-        print("DEBUG → chiamata API:", symbol, prezzo)
-
-        t.prezzo_attuale = prezzo
-
-        if prezzo:
-            t.gain_loss = ((prezzo - t.prezzo_carico) / t.prezzo_carico) * 100
-        else:
-            t.gain_loss = None
-
-    return render_template("index.html", portafoglio=titoli)
+    return render_template("index.html", portafoglio=titoli, ultimo_aggiornamento=ultimo_agg)
 
 
 # ---------------------------------------------------------
-#  ENDPOINT: aggiorna un singolo titolo
+#  ENDPOINT: aggiorna un singolo titolo (usato dalla scheda)
 # ---------------------------------------------------------
 @portfolio_bp.route("/refresh/<symbol>")
 def refresh_price(symbol):
@@ -51,12 +52,30 @@ def refresh_price(symbol):
 
     prezzo = get_price(symbol)
 
-    print("DEBUG → refresh:", symbol, prezzo)
-
     return jsonify({
         "symbol": original_symbol,
         "prezzo": prezzo
     })
+
+
+# ---------------------------------------------------------
+#  ENDPOINT: AGGIORNA TUTTI I TITOLI (BOTTONE)
+# ---------------------------------------------------------
+@portfolio_bp.route("/aggiorna_tutti")
+def aggiorna_tutti():
+    portafoglio = carica_portafoglio_da_csv("data/portfolio.csv")
+    titoli = portafoglio.lista_titoli()
+
+    for t in titoli:
+        api_symbol = t.symbol if "." in t.symbol else t.symbol + ".MI"
+        prezzo = get_price(api_symbol)
+        t.prezzo_attuale = prezzo
+
+    # 🔥 Salviamo l’ora dell’aggiornamento
+    salva_ultimo_aggiornamento()
+
+    # Torniamo alla homepage
+    return jsonify({"status": "ok"})
 
 
 # ---------------------------------------------------------
@@ -72,22 +91,21 @@ def scheda(symbol):
     if not titolo:
         return "Titolo non trovato", 404
 
-    # 🔥 Recuperiamo il prezzo attuale
+    # 🔥 Recuperiamo il prezzo attuale (solo quando apri la scheda)
     api_symbol = symbol if "." in symbol else symbol + ".MI"
     prezzo_attuale = get_price(api_symbol)
     titolo.prezzo_attuale = prezzo_attuale
 
-    # Carica costi gestione
     costi = carica_costi_gestione()
 
-    # --- CALCOLI DI ACQUISTO ---
+    # --- ACQUISTO ---
     prezzo_acquisto_unitario = titolo.prezzo_carico
     valore_acquisto = prezzo_acquisto_unitario * titolo.quantita
     spese_fisse_acq = costi["spese_acquisto"]
     commissioni_acq = valore_acquisto * (costi["commissioni_acquisto"] / 100)
     totale_speso = valore_acquisto + spese_fisse_acq + commissioni_acq
 
-    # --- CALCOLI DI VENDITA ---
+    # --- VENDITA ---
     prezzo_vendita_unitario = prezzo_attuale
     valore_vendita = prezzo_vendita_unitario * titolo.quantita
     spese_fisse_vend = costi["spese_vendita"]
@@ -98,18 +116,18 @@ def scheda(symbol):
     guadagno_netto = totale_incassato - totale_speso
 
     return render_template(
-    "scheda.html",
-    titolo=titolo,
-    costi=costi,  # 🔥 MANCAVA QUESTO
-    prezzo_acquisto_unitario=prezzo_acquisto_unitario,
-    prezzo_vendita_unitario=prezzo_vendita_unitario,
-    valore_acquisto=valore_acquisto,
-    spese_fisse_acq=spese_fisse_acq,
-    commissioni_acq=commissioni_acq,
-    totale_speso=totale_speso,
-    valore_vendita=valore_vendita,
-    spese_fisse_vend=spese_fisse_vend,
-    commissioni_vend=commissioni_vend,
-    totale_incassato=totale_incassato,
-    guadagno_netto=guadagno_netto
-)
+        "scheda.html",
+        titolo=titolo,
+        costi=costi,
+        prezzo_acquisto_unitario=prezzo_acquisto_unitario,
+        prezzo_vendita_unitario=prezzo_vendita_unitario,
+        valore_acquisto=valore_acquisto,
+        spese_fisse_acq=spese_fisse_acq,
+        commissioni_acq=commissioni_acq,
+        totale_speso=totale_speso,
+        valore_vendita=valore_vendita,
+        spese_fisse_vend=spese_fisse_vend,
+        commissioni_vend=commissioni_vend,
+        totale_incassato=totale_incassato,
+        guadagno_netto=guadagno_netto
+    )
