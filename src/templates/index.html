@@ -6,41 +6,6 @@
     <link rel="stylesheet" href="/static/style.css">
 
     <style>
-        .update-warning {
-            text-align: center;
-            font-size: 20px;
-            color: #c62828;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-
-        .last-update {
-            text-align: center;
-            font-size: 18px;
-            color: #555;
-            margin-bottom: 25px;
-        }
-
-        .refresh-all-btn {
-            padding: 14px 26px;
-            background: #1e88e5;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 20px;
-            font-weight: bold;
-            transition: background 0.2s ease;
-        }
-
-        .refresh-all-btn:hover {
-            background: #1565c0;
-        }
-
-        .refresh-all-btn:active {
-            background: #0d47a1;
-        }
-
         .center {
             text-align: center;
             margin-bottom: 25px;
@@ -57,6 +22,32 @@
                     }
                 });
         }
+
+        // Mostra il badge verde se l'aggiornamento è recente (< 60 sec)
+        function mostraBadgeAggiornato() {
+            const ultimo = "{{ ultimo_aggiornamento }}";
+
+            if (ultimo === "Mai aggiornato") return;
+
+            const parts = ultimo.split(" ");
+            const data = parts[0].split("/");
+            const ora = parts[1].split(":");
+
+            const dt = new Date(
+                data[2], data[1] - 1, data[0],
+                ora[0], ora[1]
+            );
+
+            const adesso = new Date();
+            const diffSec = (adesso - dt) / 1000;
+
+            if (diffSec < 60) {
+                document.getElementById("badgeAggiornato").style.display = "block";
+                document.getElementById("badgeNonAggiornato").style.display = "none";
+            }
+        }
+
+        window.onload = mostraBadgeAggiornato;
     </script>
 </head>
 
@@ -68,16 +59,17 @@
 
 <div class="container">
 
-    <!-- 🔴 AVVISO DATI NON AGGIORNATI -->
-{% if ultimo_aggiornamento != "Mai aggiornato" %}
-    <div class="update-success" id="badgeAggiornato" style="display:none;">
-        🟢 Dati aggiornati
-    </div>
-{% endif %}
+    <!-- 🟢 BADGE VERDE (inizialmente nascosto) -->
+    {% if ultimo_aggiornamento != "Mai aggiornato" %}
+        <div class="update-success" id="badgeAggiornato" style="display:none;">
+            🟢 Dati aggiornati
+        </div>
+    {% endif %}
 
-<div class="update-warning" id="badgeNonAggiornato">
-    ⚠ I dati potrebbero non essere aggiornati — premi “Aggiorna Tutti”
-</div>
+    <!-- 🔴 BADGE ROSSO (visibile di default) -->
+    <div class="update-warning" id="badgeNonAggiornato">
+        ⚠ I dati potrebbero non essere aggiornati — premi “Aggiorna Tutti”
+    </div>
 
     <!-- 🕒 ULTIMO AGGIORNAMENTO -->
     <div class="last-update">
