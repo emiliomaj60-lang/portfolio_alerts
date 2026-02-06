@@ -13,9 +13,8 @@ portfolio_bp = Blueprint("portfolio", __name__)
 
 
 # ---------------------------------------------------------
-#  FUNZIONI PER GESTIRE L’ULTIMO AGGIORNAMENTO
+#  GESTIONE FILE ULTIMO AGGIORNAMENTO
 # ---------------------------------------------------------
-
 def salva_ultimo_aggiornamento():
     with open("data/ultimo_aggiornamento.txt", "w") as f:
         f.write(datetime.now().strftime("%d/%m/%Y %H:%M"))
@@ -29,20 +28,28 @@ def leggi_ultimo_aggiornamento():
 
 
 # ---------------------------------------------------------
-#  PAGINA PRINCIPALE DEL PORTAFOGLIO
+#  HOMEPAGE PORTAFOGLIO
 # ---------------------------------------------------------
 @portfolio_bp.route("/")
 def index():
     portafoglio = carica_portafoglio_da_csv("data/portfolio.csv")
     titoli = portafoglio.lista_titoli()
 
-    # 🔵 Carichiamo i prezzi salvati
+    # Carichiamo i prezzi salvati
     prezzi_salvati = carica_prezzi_attuali()
 
-    # 🔵 Applichiamo i prezzi ai titoli
+    # Applichiamo i prezzi e calcoliamo gain/loss
     for t in titoli:
         if t.symbol in prezzi_salvati:
             t.prezzo_attuale = prezzi_salvati[t.symbol]
+
+            try:
+                t.gain_loss = ((t.prezzo_attuale - t.prezzo_carico) / t.prezzo_carico) * 100
+            except:
+                t.gain_loss = None
+        else:
+            t.prezzo_attuale = None
+            t.gain_loss = None
 
     ultimo_agg = leggi_ultimo_aggiornamento()
 
@@ -50,7 +57,7 @@ def index():
 
 
 # ---------------------------------------------------------
-#  ENDPOINT: aggiorna un singolo titolo (usato dalla scheda)
+#  AGGIORNA UN SINGOLO TITOLO (scheda)
 # ---------------------------------------------------------
 @portfolio_bp.route("/refresh/<symbol>")
 def refresh_price(symbol):
@@ -67,7 +74,7 @@ def refresh_price(symbol):
 
 
 # ---------------------------------------------------------
-#  ENDPOINT: AGGIORNA TUTTI I TITOLI (BOTTONE)
+#  AGGIORNA TUTTI I TITOLI (bottone homepage)
 # ---------------------------------------------------------
 @portfolio_bp.route("/aggiorna_tutti")
 def aggiorna_tutti():
@@ -80,18 +87,19 @@ def aggiorna_tutti():
         api_symbol = t.symbol if "." in t.symbol else t.symbol + ".MI"
         prezzo = get_price(api_symbol)
 
-        print("DEBUG →", t.symbol, "=", prezzo)   # 👈 LOG IMPORTANTE
+        print("DEBUG →", t.symbol, "=", prezzo)
 
-        # Salviamo il prezzo nel dizionario
-        prezzi[t.symbol] = prezzo
+        if prezzo is not None:
+            prezzi[t.symbol] = prezzo
 
-    # 🔵 Salviamo i prezzi aggiornati nel file CSV
+    # Salviamo i prezzi aggiornati
     salva_prezzi_attuali(prezzi)
 
-    # 🔵 Salviamo l’ora dell’aggiornamento
+    # Salviamo l’ora dell’aggiornamento
     salva_ultimo_aggiornamento()
 
     return jsonify({"status": "ok"})
+
 
 # ---------------------------------------------------------
 #  PAGINA SCHEDA RIASSUNTIVA
@@ -106,7 +114,7 @@ def scheda(symbol):
     if not titolo:
         return "Titolo non trovato", 404
 
-    # 🔵 Recuperiamo il prezzo attuale (solo quando apri la scheda)
+    # Aggiorniamo il prezzo solo per la scheda
     api_symbol = symbol if "." in symbol else symbol + ".MI"
     prezzo_attuale = get_price(api_symbol)
     titolo.prezzo_attuale = prezzo_attuale
