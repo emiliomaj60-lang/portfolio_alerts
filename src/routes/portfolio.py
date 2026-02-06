@@ -80,6 +80,8 @@ def aggiorna_tutti():
         api_symbol = t.symbol if "." in t.symbol else t.symbol + ".MI"
         prezzo = get_price(api_symbol)
 
+        print("DEBUG →", t.symbol, "=", prezzo)   # 👈 LOG IMPORTANTE
+
         # Salviamo il prezzo nel dizionario
         prezzi[t.symbol] = prezzo
 
