@@ -18,11 +18,10 @@
             <tr>
                 <th>Titolo</th>
                 <th>Quantità</th>
-                <th>Prezzo Medio</th>
+                <th>Prezzo Acquisto</th>
                 <th>Prezzo Attuale</th>
-                <th>Valore</th>
-                <th>Gain/Loss %</th>
-                <th>Aggiorna</th>
+                <th>Controvalore</th>
+                <th>Variazione %</th>
             </tr>
         </thead>
 
@@ -52,23 +51,23 @@
                         -
                     {% endif %}
                 </td>
-
-                <td>
-                    <button class="refresh-btn"
-                        onclick="aggiorna('{{ t.symbol }}', {{ t.quantita }}, {{ t.prezzo_carico }})">
-                        Aggiorna
-                    </button>
-                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 
+    <!-- 🔄 BOTTONE UNICO IN BASSO AL CENTRO -->
+    <div class="update-container">
+        <button class="refresh-all-btn" onclick="aggiornaTutti()">
+            🔄 Aggiorna Tutti
+        </button>
+    </div>
+
 </div>
 
 <script>
 function aggiorna(symbol, quantita, prezzo_carico) {
-    fetch(`/refresh/${symbol}`)
+    return fetch(`/refresh/${symbol}`)
         .then(r => r.json())
         .then(data => {
             const prezzo = data.prezzo;
@@ -89,6 +88,13 @@ function aggiorna(symbol, quantita, prezzo_carico) {
             // Colore verde/rosso
             gainCell.className = gain >= 0 ? "gain" : "loss";
         });
+}
+
+// 🔄 FUNZIONE PER AGGIORNARE TUTTI I TITOLI
+function aggiornaTutti() {
+    {% for t in portafoglio %}
+        aggiorna("{{ t.symbol }}", {{ t.quantita }}, {{ t.prezzo_carico }});
+    {% endfor %}
 }
 </script>
 
