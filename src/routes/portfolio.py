@@ -86,18 +86,35 @@ def scheda(symbol):
     # Carica costi gestione
     costi = carica_costi_gestione()
 
-    # Calcoli
+    # --- CALCOLI DI ACQUISTO ---
     valore_acquisto = titolo.prezzo_carico * titolo.quantita
-    spese_fisse = costi["spese_acquisto"]
-    commissioni = valore_acquisto * (costi["commissioni_acquisto"] / 100)
-    totale_speso = valore_acquisto + spese_fisse + commissioni
+    spese_fisse_acq = costi["spese_acquisto"]
+    commissioni_acq = valore_acquisto * (costi["commissioni_acquisto"] / 100)
+    totale_speso = valore_acquisto + spese_fisse_acq + commissioni_acq
+
+    # --- CALCOLI DI VENDITA ---
+    prezzo_attuale = titolo.prezzo_attuale
+    valore_vendita = prezzo_attuale * titolo.quantita
+
+    spese_fisse_vend = costi["spese_vendita"]
+    commissioni_vend = valore_vendita * (costi["commissioni_vendita"] / 100)
+
+    totale_incassato = valore_vendita - spese_fisse_vend - commissioni_vend
+
+    # --- GUADAGNO NETTO ---
+    guadagno_netto = totale_incassato - totale_speso
 
     return render_template(
         "scheda.html",
         titolo=titolo,
         costi=costi,
         valore_acquisto=valore_acquisto,
-        spese_fisse=spese_fisse,
-        commissioni=commissioni,
-        totale_speso=totale_speso
+        spese_fisse_acq=spese_fisse_acq,
+        commissioni_acq=commissioni_acq,
+        totale_speso=totale_speso,
+        valore_vendita=valore_vendita,
+        spese_fisse_vend=spese_fisse_vend,
+        commissioni_vend=commissioni_vend,
+        totale_incassato=totale_incassato,
+        guadagno_netto=guadagno_netto
     )
