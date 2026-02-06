@@ -205,8 +205,8 @@ function simulaVendita() {
     const totaleSpeso = {{ totale_speso }};
     const guadagnoNetto = totaleIncassato - totaleSpeso;
 
-    document.getElementById("valoreVenditaCell").innerText = valoreVendita.toFixed(2) + " €";
-    document.getElementById("totaleIncassatoCell").innerText = totaleIncassato.toFixed(2) + " €";
+    document.getElementById("valoreVenditaCell").innerText = valoreVendita.toFixed(0) + " €";
+    document.getElementById("totaleIncassatoCell").innerText = totaleIncassato.toFixed(0) + " €";
 
     const guadagnoCell = document.getElementById("guadagnoNettoCell");
     guadagnoCell.innerText = guadagnoNetto.toFixed(0) + " €";
