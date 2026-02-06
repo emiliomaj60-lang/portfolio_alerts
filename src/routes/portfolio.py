@@ -98,17 +98,18 @@ def scheda(symbol):
     guadagno_netto = totale_incassato - totale_speso
 
     return render_template(
-        "scheda.html",
-        titolo=titolo,
-        prezzo_acquisto_unitario=prezzo_acquisto_unitario,
-        prezzo_vendita_unitario=prezzo_vendita_unitario,
-        valore_acquisto=valore_acquisto,
-        spese_fisse_acq=spese_fisse_acq,
-        commissioni_acq=commissioni_acq,
-        totale_speso=totale_speso,
-        valore_vendita=valore_vendita,
-        spese_fisse_vend=spese_fisse_vend,
-        commissioni_vend=commissioni_vend,
-        totale_incassato=totale_incassato,
-        guadagno_netto=guadagno_netto
-    )
+    "scheda.html",
+    titolo=titolo,
+    costi=costi,  # 🔥 MANCAVA QUESTO
+    prezzo_acquisto_unitario=prezzo_acquisto_unitario,
+    prezzo_vendita_unitario=prezzo_vendita_unitario,
+    valore_acquisto=valore_acquisto,
+    spese_fisse_acq=spese_fisse_acq,
+    commissioni_acq=commissioni_acq,
+    totale_speso=totale_speso,
+    valore_vendita=valore_vendita,
+    spese_fisse_vend=spese_fisse_vend,
+    commissioni_vend=commissioni_vend,
+    totale_incassato=totale_incassato,
+    guadagno_netto=guadagno_netto
+)
