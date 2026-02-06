@@ -1,31 +1,37 @@
 from datetime import datetime
 
 class Titolo:
-    def __init__(self, isin, symbol, nome, quantita, prezzo_carico,
-                 spese_commissioni, spese_fisse, data_acquisto):
+    def __init__(self, isin, symbol, nome, quantita, prezzo_carico, data_acquisto):
         
         self.isin = isin
         self.symbol = symbol
         self.nome = nome
         self.quantita = float(quantita)
         self.prezzo_carico = float(prezzo_carico)
-        self.spese_commissioni = float(spese_commissioni)
-        self.spese_fisse = float(spese_fisse)
 
-        # data in formato italiano gg/mm/aaaa
-        self.data_acquisto = datetime.strptime(data_acquisto, "%d/%m/%Y")
+        # data_acquisto nel CSV è in formato gg/mm/aaaa
+        try:
+            self.data_acquisto = datetime.strptime(data_acquisto, "%d/%m/%Y")
+        except:
+            # fallback se il CSV usa formato ISO (aaaa-mm-gg)
+            self.data_acquisto = datetime.strptime(data_acquisto, "%Y-%m-%d")
+
+        # Valori dinamici (riempiti in portfolio.py)
+        self.prezzo_attuale = None
+        self.gain_loss = None
 
     def valore_totale_carico(self):
-        """Valore totale investito su questo titolo (inclusi costi)."""
-        return (self.prezzo_carico * self.quantita) + self.spese_commissioni + self.spese_fisse
+        """Valore totale investito (solo prezzo × quantità)."""
+        return self.prezzo_carico * self.quantita
 
     def __str__(self):
-        return (f"{self.nome} ({self.symbol}) - ISIN: {self.isin}\n"
-                f" Quantità: {self.quantita}\n"
-                f" Prezzo carico: {self.prezzo_carico} €\n"
-                f" Spese: comm={self.spese_commissioni} €, fisse={self.spese_fisse} €\n"
-                f" Data acquisto: {self.data_acquisto.strftime('%d/%m/%Y')}\n")
-        
+        return (
+            f"{self.nome} ({self.symbol}) - ISIN: {self.isin}\n"
+            f" Quantità: {self.quantita}\n"
+            f" Prezzo carico: {self.prezzo_carico} €\n"
+            f" Data acquisto: {self.data_acquisto.strftime('%d/%m/%Y')}\n"
+        )
+
 
 class Portafoglio:
     def __init__(self):
