@@ -1,7 +1,7 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, jsonify
 
 # Import corretti per Railway (che esegue dentro /app/src)
-from data_access import carica_portafoglio_da_csv
+from data_access import carica_portafoglio_da_csv, carica_costi_gestione
 from market_api import get_price
 
 import os
@@ -12,6 +12,10 @@ print("DEBUG → import market_api:", get_price)
 
 portfolio_bp = Blueprint("portfolio", __name__)
 
+
+# ---------------------------------------------------------
+#  PAGINA PRINCIPALE DEL PORTAFOGLIO
+# ---------------------------------------------------------
 @portfolio_bp.route("/")
 def index():
     # Carica il portafoglio dal CSV
@@ -40,5 +44,60 @@ def index():
         else:
             t.gain_loss = None
 
-    # 🔥 QUI ERA IL PROBLEMA: ora passiamo la variabile giusta
+    # Passiamo i titoli al template
     return render_template("index.html", portafoglio=titoli)
+
+
+# ---------------------------------------------------------
+#  ENDPOINT: aggiorna un singolo titolo
+# ---------------------------------------------------------
+@portfolio_bp.route("/refresh/<symbol>")
+def refresh_price(symbol):
+    # Aggiungi .MI se manca
+    original_symbol = symbol
+    if "." not in symbol:
+        symbol = symbol + ".MI"
+
+    prezzo = get_price(symbol)
+
+    print("DEBUG → refresh:", symbol, prezzo)
+
+    return jsonify({
+        "symbol": original_symbol,
+        "prezzo": prezzo
+    })
+
+
+# ---------------------------------------------------------
+#  PAGINA SCHEDA RIASSUNTIVA
+# ---------------------------------------------------------
+@portfolio_bp.route("/scheda/<symbol>")
+def scheda(symbol):
+    # Carica portafoglio
+    portafoglio = carica_portafoglio_da_csv("data/portfolio.csv")
+    titoli = portafoglio.lista_titoli()
+
+    # Trova il titolo richiesto
+    titolo = next((t for t in titoli if t.symbol == symbol), None)
+
+    if not titolo:
+        return "Titolo non trovato", 404
+
+    # Carica costi gestione
+    costi = carica_costi_gestione()
+
+    # Calcoli
+    valore_acquisto = titolo.prezzo_carico * titolo.quantita
+    spese_fisse = costi["spese_acquisto"]
+    commissioni = valore_acquisto * (costi["commissioni_acquisto"] / 100)
+    totale_speso = valore_acquisto + spese_fisse + commissioni
+
+    return render_template(
+        "scheda.html",
+        titolo=titolo,
+        costi=costi,
+        valore_acquisto=valore_acquisto,
+        spese_fisse=spese_fisse,
+        commissioni=commissioni,
+        totale_speso=totale_speso
+    )
