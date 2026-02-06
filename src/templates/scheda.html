@@ -7,20 +7,20 @@
 
     <style>
         table {
-            font-size: 24px;
+            font-size: 26px;
         }
         th {
             width: 45%;
-            font-size: 26px;
+            font-size: 28px;
         }
         td {
-            font-size: 26px;
+            font-size: 28px;
         }
         h1 {
-            font-size: 38px;
+            font-size: 42px;
         }
         h2 {
-            font-size: 32px;
+            font-size: 34px;
         }
         .positivo {
             color: #2e7d32;
@@ -31,9 +31,16 @@
             font-weight: bold;
         }
         .highlight {
-            font-size: 30px;
+            font-size: 32px;
             font-weight: bold;
             color: #1e88e5;
+        }
+        .section-title {
+            font-size: 30px;
+            font-weight: bold;
+            color: #0d47a1;
+            padding-top: 20px;
+            padding-bottom: 10px;
         }
     </style>
 </head>
@@ -52,6 +59,10 @@
     <table>
 
         <!-- 🔵 SEZIONE ACQUISTO -->
+        <tr>
+            <td colspan="2" class="section-title">DATI DI ACQUISTO</td>
+        </tr>
+
         <tr>
             <th>Prezzo di Acquisto (unitario)</th>
             <td class="highlight">{{ prezzo_acquisto_unitario }} €</td>
@@ -82,9 +93,13 @@
             <td class="highlight"><b>{{ totale_speso | round(2) }} €</b></td>
         </tr>
 
-        <tr><td colspan="2" style="height:25px;"></td></tr>
+        <tr><td colspan="2" style="height:35px;"></td></tr>
 
         <!-- 🔵 SEZIONE VENDITA -->
+        <tr>
+            <td colspan="2" class="section-title">DATI DI VENDITA (OGGI)</td>
+        </tr>
+
         <tr>
             <th>Prezzo Attuale (unitario)</th>
             <td class="highlight">{{ prezzo_vendita_unitario }} €</td>
@@ -110,19 +125,19 @@
             <td class="highlight"><b>{{ totale_incassato | round(2) }} €</b></td>
         </tr>
 
-        <tr><td colspan="2" style="height:25px;"></td></tr>
+        <tr><td colspan="2" style="height:35px;"></td></tr>
 
         <!-- 🔵 GUADAGNO NETTO -->
         <tr>
             <th><b>GUADAGNO NETTO SE VENDI ORA</b></th>
             <td class="{% if guadagno_netto >= 0 %}positivo{% else %}negativo{% endif %}">
-                <b style="font-size:32px;">{{ guadagno_netto | round(2) }} €</b>
+                <b style="font-size:36px;">{{ guadagno_netto | round(2) }} €</b>
             </td>
         </tr>
 
     </table>
 
-    <div class="update-container" style="margin-top:30px;">
+    <div class="update-container" style="margin-top:40px;">
         <a href="/" class="refresh-all-btn">⬅ Torna al Portafoglio</a>
     </div>
 
