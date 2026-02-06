@@ -114,6 +114,19 @@ def scheda(symbol):
     if not titolo:
         return "Titolo non trovato", 404
 
+    # 🔵 FORMATTAZIONE DATA ACQUISTO IN STILE ITALIANO
+    try:
+        # Caso: "2024-05-12 00:00:00"
+        dt = datetime.strptime(titolo.data_acquisto, "%Y-%m-%d %H:%M:%S")
+        titolo.data_acquisto = dt.strftime("%d/%m/%Y")
+    except:
+        try:
+            # Caso: "2024-05-12"
+            dt = datetime.strptime(titolo.data_acquisto, "%Y-%m-%d")
+            titolo.data_acquisto = dt.strftime("%d/%m/%Y")
+        except:
+            pass
+
     # Aggiorniamo il prezzo solo per la scheda
     api_symbol = symbol if "." in symbol else symbol + ".MI"
     prezzo_attuale = get_price(api_symbol)
