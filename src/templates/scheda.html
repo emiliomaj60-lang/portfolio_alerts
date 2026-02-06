@@ -4,6 +4,33 @@
     <meta charset="UTF-8">
     <title>Scheda Riassuntiva</title>
     <link rel="stylesheet" href="/static/style.css">
+
+    <style>
+        table {
+            font-size: 20px;
+        }
+        th {
+            width: 40%;
+            font-size: 22px;
+        }
+        td {
+            font-size: 22px;
+        }
+        h1 {
+            font-size: 32px;
+        }
+        h2 {
+            font-size: 28px;
+        }
+        .positivo {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+        .negativo {
+            color: #c62828;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
 
@@ -23,30 +50,58 @@
             <td>{{ titolo.symbol }}</td>
         </tr>
         <tr>
-            <th>Codice Azione</th>
-            <td>{{ titolo.symbol }}</td>
-        </tr>
-        <tr>
             <th>N° Azioni</th>
             <td>{{ titolo.quantita }}</td>
         </tr>
         <tr>
-            <th>Valore del Titolo Acquistato</th>
+            <th>Valore Acquisto</th>
             <td>{{ valore_acquisto | round(2) }} €</td>
         </tr>
         <tr>
             <th>Spese Fisse Acquisto</th>
-            <td>{{ spese_fisse }} €</td>
+            <td>{{ spese_fisse_acq }} €</td>
         </tr>
         <tr>
-            <th>Commissioni per Acquisto</th>
-            <td>{{ commissioni | round(2) }} €</td>
+            <th>Commissioni Acquisto</th>
+            <td>{{ commissioni_acq | round(2) }} €</td>
         </tr>
         <tr>
-            <th><b>TOTALE EURO SPESI</b></th>
+            <th><b>TOTALE SPESO</b></th>
             <td><b>{{ totale_speso | round(2) }} €</b></td>
         </tr>
+
+        <tr><td colspan="2" style="height:20px;"></td></tr>
+
+        <tr>
+            <th>Valore Vendita Attuale</th>
+            <td>{{ valore_vendita | round(2) }} €</td>
+        </tr>
+        <tr>
+            <th>Spese Fisse Vendita</th>
+            <td>{{ spese_fisse_vend }} €</td>
+        </tr>
+        <tr>
+            <th>Commissioni Vendita</th>
+            <td>{{ commissioni_vend | round(2) }} €</td>
+        </tr>
+        <tr>
+            <th><b>TOTALE INCASSATO</b></th>
+            <td><b>{{ totale_incassato | round(2) }} €</b></td>
+        </tr>
+
+        <tr><td colspan="2" style="height:20px;"></td></tr>
+
+        <tr>
+            <th><b>GUADAGNO NETTO SE VENDI ORA</b></th>
+            <td class="{% if guadagno_netto >= 0 %}positivo{% else %}negativo{% endif %}">
+                <b>{{ guadagno_netto | round(2) }} €</b>
+            </td>
+        </tr>
     </table>
+
+    <div class="update-container" style="margin-top:30px;">
+        <a href="/" class="refresh-all-btn">⬅ Torna al Portafoglio</a>
+    </div>
 
 </div>
 
