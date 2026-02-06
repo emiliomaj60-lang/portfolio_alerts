@@ -86,7 +86,7 @@
         <!-- 🔵 SEZIONE ACQUISTO -->
         <tr>
             <td colspan="2" class="section-title">
-                DATI DI ACQUISTO <span style="font-size:22px; color:#555;">({{ titolo.data_acquisto }})</span>
+                DATI DI ACQUISTO <span style="font-size:22px; color:#555;">({{ titolo.data_acquisto.split(" ")[0] }})</span>
             </td>
         </tr>
 
@@ -176,7 +176,7 @@
             <th><b>GUADAGNO NETTO SE VENDI ORA</b></th>
             <td id="guadagnoNettoCell"
                 class="{% if guadagno_netto >= 0 %}positivo{% else %}negativo{% endif %}">
-                <b style="font-size:36px;">{{ guadagno_netto | round(0) }} €</b>
+                <b style="font-size:36px;">{{ guadagno_netto | round(0)|int }} €</b>
             </td>
         </tr>
 
