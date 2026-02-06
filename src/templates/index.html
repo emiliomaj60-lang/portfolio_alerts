@@ -22,6 +22,7 @@
                 <th>Prezzo Attuale</th>
                 <th>Controvalore</th>
                 <th>Variazione %</th>
+                <th>Scheda</th>
             </tr>
         </thead>
 
@@ -32,7 +33,7 @@
                 <td>{{ t.quantita }}</td>
                 <td>{{ t.prezzo_carico }}</td>
 
-                <td id="prezzo-{{ t.symbol }}">
+               <td id="prezzo-{{ t.symbol }}">
                     {{ t.prezzo_attuale }}
                 </td>
 
@@ -48,13 +49,20 @@
                     {% if t.gain_loss %}
                         {{ t.gain_loss | round(2) }}%
                     {% else %}
-                        -
+                    -
                     {% endif %}
+                </td>
+
+                <!-- 📄 COLONNA SCHEDA RIASSUNTIVA -->
+                <td>
+                    <a class="refresh-btn" href="/scheda/{{ t.symbol }}">📄</a>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+
+
 
     <!-- 🔄 BOTTONE UNICO IN BASSO AL CENTRO -->
     <div class="update-container">
