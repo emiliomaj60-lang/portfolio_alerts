@@ -115,16 +115,19 @@ def scheda(symbol):
         return "Titolo non trovato", 404
 
     # 🔵 FORMATTAZIONE DATA ACQUISTO IN STILE ITALIANO
+    data_raw = str(titolo.data_acquisto).strip()
+
     try:
         # Caso: "2024-05-12 00:00:00"
-        dt = datetime.strptime(titolo.data_acquisto, "%Y-%m-%d %H:%M:%S")
+        dt = datetime.strptime(data_raw, "%Y-%m-%d %H:%M:%S")
         titolo.data_acquisto = dt.strftime("%d/%m/%Y")
     except:
         try:
             # Caso: "2024-05-12"
-            dt = datetime.strptime(titolo.data_acquisto, "%Y-%m-%d")
+            dt = datetime.strptime(data_raw, "%Y-%m-%d")
             titolo.data_acquisto = dt.strftime("%d/%m/%Y")
         except:
+            # Se arriva già formattata o in altro formato, la lasciamo così
             pass
 
     # Aggiorniamo il prezzo solo per la scheda
