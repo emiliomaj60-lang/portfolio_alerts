@@ -1,5 +1,7 @@
 from flask import Flask
 
+# trigger redeploy
+
 def create_app():
     app = Flask(__name__)
 
@@ -10,5 +12,9 @@ def create_app():
 
     app.register_blueprint(portfolio_bp)
     app.register_blueprint(api_bp, url_prefix="/api")
+
+    @app.route('/manifest.json')
+    def manifest():
+        return send_from_directory('.', 'manifest.json')
 
     return app
