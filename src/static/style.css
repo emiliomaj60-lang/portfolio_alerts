@@ -81,3 +81,25 @@ tr:hover {
 .refresh-all-btn:active {
     background: #0d47a1;
 }
+
+/* 🔵 Bottone grande per "Torna al Portafoglio" */
+.back-btn {
+    display: inline-block;
+    padding: 18px 32px;
+    background: #1e88e5;
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: background 0.2s ease;
+    margin-top: 30px;
+}
+
+.back-btn:hover {
+    background: #1565c0;
+}
+
+.back-btn:active {
+    background: #0d47a1;
+}
