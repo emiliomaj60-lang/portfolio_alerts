@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Scheda Riassuntiva</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<header>
+    <h1>SCHEDA RIASSUNTIVA</h1>
+</header>
+
+<div class="container">
+
+    <h2 style="text-align:center; margin-bottom:25px;">
+        {{ titolo.symbol }}
+    </h2>
+
+    <table>
+        <tr>
+            <th>Nome Azione</th>
+            <td>{{ titolo.symbol }}</td>
+        </tr>
+        <tr>
+            <th>Codice Azione</th>
+            <td>{{ titolo.symbol }}</td>
+        </tr>
+        <tr>
+            <th>N° Azioni</th>
+            <td>{{ titolo.quantita }}</td>
+        </tr>
+        <tr>
+            <th>Valore del Titolo Acquistato</th>
+            <td>{{ valore_acquisto | round(2) }} €</td>
+        </tr>
+        <tr>
+            <th>Spese Fisse Acquisto</th>
+            <td>{{ spese_fisse }} €</td>
+        </tr>
+        <tr>
+            <th>Commissioni per Acquisto</th>
+            <td>{{ commissioni | round(2) }} €</td>
+        </tr>
+        <tr>
+            <th><b>TOTALE EURO SPESI</b></th>
+            <td><b>{{ totale_speso | round(2) }} €</b></td>
+        </tr>
+    </table>
+
+</div>
+
+</body>
+</html>
