@@ -72,7 +72,7 @@ def scheda(symbol):
     if not titolo:
         return "Titolo non trovato", 404
 
-    # 🔥 Recuperiamo il prezzo attuale (mancava!)
+    # 🔥 Recuperiamo il prezzo attuale
     api_symbol = symbol if "." in symbol else symbol + ".MI"
     prezzo_attuale = get_price(api_symbol)
     titolo.prezzo_attuale = prezzo_attuale
@@ -81,13 +81,15 @@ def scheda(symbol):
     costi = carica_costi_gestione()
 
     # --- CALCOLI DI ACQUISTO ---
-    valore_acquisto = titolo.prezzo_carico * titolo.quantita
+    prezzo_acquisto_unitario = titolo.prezzo_carico
+    valore_acquisto = prezzo_acquisto_unitario * titolo.quantita
     spese_fisse_acq = costi["spese_acquisto"]
     commissioni_acq = valore_acquisto * (costi["commissioni_acquisto"] / 100)
     totale_speso = valore_acquisto + spese_fisse_acq + commissioni_acq
 
     # --- CALCOLI DI VENDITA ---
-    valore_vendita = prezzo_attuale * titolo.quantita
+    prezzo_vendita_unitario = prezzo_attuale
+    valore_vendita = prezzo_vendita_unitario * titolo.quantita
     spese_fisse_vend = costi["spese_vendita"]
     commissioni_vend = valore_vendita * (costi["commissioni_vendita"] / 100)
     totale_incassato = valore_vendita - spese_fisse_vend - commissioni_vend
@@ -98,7 +100,8 @@ def scheda(symbol):
     return render_template(
         "scheda.html",
         titolo=titolo,
-        costi=costi,
+        prezzo_acquisto_unitario=prezzo_acquisto_unitario,
+        prezzo_vendita_unitario=prezzo_vendita_unitario,
         valore_acquisto=valore_acquisto,
         spese_fisse_acq=spese_fisse_acq,
         commissioni_acq=commissioni_acq,
