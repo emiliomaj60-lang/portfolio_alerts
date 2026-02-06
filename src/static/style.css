@@ -28,58 +28,28 @@ header {
 }
 
 /* ----------------------------------------------------
-   TABELLA – VERSIONE PROFESSIONALE
+   TABELLA
 ---------------------------------------------------- */
 table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 26px;
-    margin-top: 20px;
+    font-size: 16px;
 }
 
 th {
-    background: #0d47a1;
-    color: white;
-    padding: 18px;
-    font-size: 28px;
+    background: #e3f2fd;
+    padding: 12px;
     text-align: left;
-    border-bottom: 3px solid #08306b;
+    border-bottom: 2px solid #90caf9;
 }
 
 td {
-    padding: 16px;
-    font-size: 28px;
+    padding: 10px;
     border-bottom: 1px solid #ddd;
 }
 
 tr:hover {
-    background: #f5f9ff;
-}
-
-/* Colonne numeriche più leggibili */
-td:nth-child(4),
-td:nth-child(5),
-td:nth-child(6),
-td:nth-child(7) {
-    text-align: right;
-    font-weight: 600;
-}
-
-/* Nome titolo più grande */
-td:nth-child(1) {
-    font-size: 30px;
-    font-weight: bold;
-}
-
-/* Icona dettagli */
-td a {
-    font-size: 32px;
-}
-
-/* Titolo pagina */
-h1 {
-    font-size: 48px;
-    margin-bottom: 25px;
+    background: #f1f8ff;
 }
 
 /* ----------------------------------------------------
@@ -110,7 +80,7 @@ h1 {
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 22px;
+    font-size: 18px;
     font-weight: bold;
     transition: background 0.2s ease;
 }
@@ -150,7 +120,7 @@ h1 {
 ---------------------------------------------------- */
 .update-warning {
     text-align: center;
-    font-size: 24px;
+    font-size: 20px;
     color: #c62828;
     margin-bottom: 10px;
     font-weight: bold;
@@ -158,10 +128,14 @@ h1 {
 
 .update-success {
     text-align: center;
-    font-size: 24px;
+    font-size: 20px;
     color: #2e7d32;
     margin-bottom: 10px;
     font-weight: bold;
+}
+
+/* Badge animato (fade-in) */
+.update-success {
     opacity: 0;
     animation: fadeIn 0.8s forwards;
 }
