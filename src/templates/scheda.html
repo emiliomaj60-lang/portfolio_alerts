@@ -117,7 +117,7 @@
 
         <tr>
             <th><b>TOTALE SPESO</b></th>
-            <td class="highlight"><b>{{ totale_speso | round(0) }} €</b></td>
+            <td class="highlight"><b>{{ totale_speso | round(0)|int }} €</b></td>
         </tr>
 
         <tr><td colspan="2" style="height:35px;"></td></tr>
@@ -165,7 +165,7 @@
         <tr>
             <th><b>TOTALE INCASSATO</b></th>
             <td id="totaleIncassatoCell" class="highlight">
-                <b>{{ totale_incassato | round(0) }} €</b>
+                <b>{{ totale_incassato | round(0)|int }} €</b>
             </td>
         </tr>
 
