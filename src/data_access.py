@@ -1,4 +1,5 @@
 import csv
+import os
 from models import Titolo, Portafoglio
 
 
@@ -40,3 +41,36 @@ def carica_portafoglio_da_csv(percorso_file):
             portafoglio.aggiungi_titolo(titolo)
 
     return portafoglio
+
+
+# ---------------------------------------------------------
+#  SALVA PREZZI AGGIORNATI (SOLUZIONE A)
+# ---------------------------------------------------------
+def salva_prezzi_attuali(prezzi, path="data/prezzi_attuali.csv"):
+    """
+    prezzi = { "BFF": 4.35, "ENEL": 6.12, ... }
+    """
+    with open(path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(["symbol", "prezzo"])
+        for symbol, prezzo in prezzi.items():
+            writer.writerow([symbol, prezzo])
+
+
+# ---------------------------------------------------------
+#  CARICA PREZZI AGGIORNATI (SOLUZIONE A)
+# ---------------------------------------------------------
+def carica_prezzi_attuali(path="data/prezzi_attuali.csv"):
+    if not os.path.exists(path):
+        return {}
+
+    prezzi = {}
+    with open(path, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            try:
+                prezzi[row["symbol"]] = float(row["prezzo"])
+            except:
+                pass
+
+    return prezzi
