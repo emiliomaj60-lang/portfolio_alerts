@@ -18,33 +18,25 @@ portfolio_bp = Blueprint("portfolio", __name__)
 # ---------------------------------------------------------
 @portfolio_bp.route("/")
 def index():
-    # Carica il portafoglio dal CSV
     portafoglio = carica_portafoglio_da_csv("data/portfolio.csv")
-
-    # Ottieni la lista dei titoli (oggetti)
     titoli = portafoglio.lista_titoli()
 
     for t in titoli:
         symbol = t.symbol
 
-        # Per titoli italiani, aggiungiamo .MI se manca
         if "." not in symbol:
             symbol = symbol + ".MI"
 
-        # Chiamata API
         prezzo = get_price(symbol)
         print("DEBUG → chiamata API:", symbol, prezzo)
 
-        # Salva il prezzo attuale nell’oggetto
         t.prezzo_attuale = prezzo
 
-        # Calcolo gain/loss percentuale
         if prezzo:
             t.gain_loss = ((prezzo - t.prezzo_carico) / t.prezzo_carico) * 100
         else:
             t.gain_loss = None
 
-    # Passiamo i titoli al template
     return render_template("index.html", portafoglio=titoli)
 
 
@@ -53,7 +45,6 @@ def index():
 # ---------------------------------------------------------
 @portfolio_bp.route("/refresh/<symbol>")
 def refresh_price(symbol):
-    # Aggiungi .MI se manca
     original_symbol = symbol
     if "." not in symbol:
         symbol = symbol + ".MI"
@@ -73,15 +64,18 @@ def refresh_price(symbol):
 # ---------------------------------------------------------
 @portfolio_bp.route("/scheda/<symbol>")
 def scheda(symbol):
-    # Carica portafoglio
     portafoglio = carica_portafoglio_da_csv("data/portfolio.csv")
     titoli = portafoglio.lista_titoli()
 
-    # Trova il titolo richiesto
     titolo = next((t for t in titoli if t.symbol == symbol), None)
 
     if not titolo:
         return "Titolo non trovato", 404
+
+    # 🔥 Recuperiamo il prezzo attuale (mancava!)
+    api_symbol = symbol if "." in symbol else symbol + ".MI"
+    prezzo_attuale = get_price(api_symbol)
+    titolo.prezzo_attuale = prezzo_attuale
 
     # Carica costi gestione
     costi = carica_costi_gestione()
@@ -93,12 +87,9 @@ def scheda(symbol):
     totale_speso = valore_acquisto + spese_fisse_acq + commissioni_acq
 
     # --- CALCOLI DI VENDITA ---
-    prezzo_attuale = titolo.prezzo_attuale
     valore_vendita = prezzo_attuale * titolo.quantita
-
     spese_fisse_vend = costi["spese_vendita"]
     commissioni_vend = valore_vendita * (costi["commissioni_vendita"] / 100)
-
     totale_incassato = valore_vendita - spese_fisse_vend - commissioni_vend
 
     # --- GUADAGNO NETTO ---
