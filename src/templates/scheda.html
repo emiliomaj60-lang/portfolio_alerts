@@ -209,7 +209,7 @@ function simulaVendita() {
     document.getElementById("totaleIncassatoCell").innerText = totaleIncassato.toFixed(2) + " €";
 
     const guadagnoCell = document.getElementById("guadagnoNettoCell");
-    guadagnoCell.innerText = guadagnoNetto.toFixed(2) + " €";
+    guadagnoCell.innerText = guadagnoNetto.toFixed(0) + " €";
     guadagnoCell.className = guadagnoNetto >= 0 ? "positivo" : "negativo";
 }
 </script>
