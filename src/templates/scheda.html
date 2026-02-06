@@ -112,12 +112,12 @@
 
         <tr>
             <th>Commissioni Acquisto</th>
-            <td>{{ commissioni_acq | round(2) }} €</td>
+            <td>{{ commissioni_acq | round(0) }} €</td>
         </tr>
 
         <tr>
             <th><b>TOTALE SPESO</b></th>
-            <td class="highlight"><b>{{ totale_speso | round(2) }} €</b></td>
+            <td class="highlight"><b>{{ totale_speso | round(0) }} €</b></td>
         </tr>
 
         <tr><td colspan="2" style="height:35px;"></td></tr>
@@ -159,13 +159,13 @@
 
         <tr>
             <th>Commissioni Vendita</th>
-            <td>{{ commissioni_vend | round(2) }} €</td>
+            <td>{{ commissioni_vend | round(1) }} €</td>
         </tr>
 
         <tr>
             <th><b>TOTALE INCASSATO</b></th>
             <td id="totaleIncassatoCell" class="highlight">
-                <b>{{ totale_incassato | round(1) }} €</b>
+                <b>{{ totale_incassato | round(0) }} €</b>
             </td>
         </tr>
 
@@ -176,7 +176,7 @@
             <th><b>GUADAGNO NETTO SE VENDI ORA</b></th>
             <td id="guadagnoNettoCell"
                 class="{% if guadagno_netto >= 0 %}positivo{% else %}negativo{% endif %}">
-                <b style="font-size:36px;">{{ guadagno_netto | round(2) }} €</b>
+                <b style="font-size:36px;">{{ guadagno_netto | round(0) }} €</b>
             </td>
         </tr>
 
