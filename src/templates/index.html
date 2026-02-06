@@ -7,50 +7,90 @@
 </head>
 <body>
 
-    <header>
-        <h1>📈 Il tuo portafoglio</h1>
-    </header>
+<header>
+    <h1>📈 Il tuo portafoglio</h1>
+</header>
 
-    <div class="container">
+<div class="container">
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Titolo</th>
-                    <th>Quantità</th>
-                    <th>Prezzo Medio</th>
-                    <th>Prezzo Attuale</th>
-                    <th>Valore</th>
-                    <th>Gain/Loss %</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for t in portafoglio %}
-                <tr>
-                    <td>{{ t.symbol }}</td>
-                    <td>{{ t.quantita }}</td>
-                    <td>{{ t.prezzo_carico }}</td>
-                    <td>{{ t.prezzo_attuale }}</td>
-                    <td>
-                        {% if t.prezzo_attuale %}
-                            {{ (t.prezzo_attuale * t.quantita) | round(2) }}
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
-                    <td class="{% if t.gain_loss and t.gain_loss >= 0 %}gain{% else %}loss{% endif %}">
-                        {% if t.gain_loss %}
-                            {{ t.gain_loss | round(2) }}%
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <table>
+        <thead>
+            <tr>
+                <th>Titolo</th>
+                <th>Quantità</th>
+                <th>Prezzo Medio</th>
+                <th>Prezzo Attuale</th>
+                <th>Valore</th>
+                <th>Gain/Loss %</th>
+                <th>Aggiorna</th>
+            </tr>
+        </thead>
 
-    </div>
+        <tbody>
+            {% for t in portafoglio %}
+            <tr id="row-{{ t.symbol }}">
+                <td>{{ t.symbol }}</td>
+                <td>{{ t.quantita }}</td>
+                <td>{{ t.prezzo_carico }}</td>
+
+                <td id="prezzo-{{ t.symbol }}">
+                    {{ t.prezzo_attuale }}
+                </td>
+
+                <td id="valore-{{ t.symbol }}">
+                    {% if t.prezzo_attuale %}
+                        {{ (t.prezzo_attuale * t.quantita) | round(2) }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+
+                <td id="gain-{{ t.symbol }}" class="{% if t.gain_loss and t.gain_loss >= 0 %}gain{% else %}loss{% endif %}">
+                    {% if t.gain_loss %}
+                        {{ t.gain_loss | round(2) }}%
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+
+                <td>
+                    <button class="refresh-btn"
+                        onclick="aggiorna('{{ t.symbol }}', {{ t.quantita }}, {{ t.prezzo_carico }})">
+                        Aggiorna
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+<script>
+function aggiorna(symbol, quantita, prezzo_carico) {
+    fetch(`/refresh/${symbol}`)
+        .then(r => r.json())
+        .then(data => {
+            const prezzo = data.prezzo;
+
+            // Aggiorna prezzo
+            document.getElementById(`prezzo-${symbol}`).innerText = prezzo;
+
+            // Aggiorna valore
+            const valore = (prezzo * quantita).toFixed(2);
+            document.getElementById(`valore-${symbol}`).innerText = valore;
+
+            // Calcola gain/loss
+            const gain = ((prezzo - prezzo_carico) / prezzo_carico * 100).toFixed(2);
+            const gainCell = document.getElementById(`gain-${symbol}`);
+
+            gainCell.innerText = gain + "%";
+
+            // Colore verde/rosso
+            gainCell.className = gain >= 0 ? "gain" : "loss";
+        });
+}
+</script>
 
 </body>
 </html>
