@@ -184,12 +184,12 @@ body::after {
     bottom: 20px;      /* FILIGRANA IN BASSO */
     left: 50%;         /* CENTRATA ORIZZONTALMENTE */
     transform: translateX(-50%);
-    width: 260px;
-    height: 260px;
+    width: 320px;
+    height: 320px;
     background-image: url("/static/icons/icon-192.png");
     background-size: contain;
     background-repeat: no-repeat;
-    opacity: 0.25;     /* TRASPARENZA */
+    opacity: 0.35;     /* TRASPARENZA */
     pointer-events: none;
     z-index: -1;       /* DIETRO AL CONTENUTO, DAVANTI ALLO SFONDO */
 }
