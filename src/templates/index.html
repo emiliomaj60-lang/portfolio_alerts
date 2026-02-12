@@ -92,6 +92,30 @@
 
     <!-- 🔵 TABELLA PORTAFOGLIO -->
     <table>
+
+<!-- 🔵 RIEPILOGO PORTAFOGLIO -->
+<div class="summary-box" style="
+    margin-top: 40px;
+    padding: 20px;
+    background: #f0f4ff;
+    border-radius: 12px;
+    font-size: 26px;
+">
+    <h2 style="margin-top:0; color:#0d47a1;">📊 RIEPILOGO PORTAFOGLIO</h2>
+
+    <p><b>Totale Speso:</b> {{ totale_speso_portafoglio }} €</p>
+
+    <p><b>Totale Incassabile (ai prezzi attuali):</b> {{ totale_incassato_portafoglio }} €</p>
+
+    <p>
+        <b>Guadagno Totale:</b>
+        <span style="font-weight:bold;
+            color: {% if guadagno_totale >= 0 %}#2e7d32{% else %}#c62828{% endif %};">
+            {{ guadagno_totale }} €
+        </span>
+    </p>
+</div>
+
         <tr>
             <th>Nome</th>
             <th>Quantità</th>
