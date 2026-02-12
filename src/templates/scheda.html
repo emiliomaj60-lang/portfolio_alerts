@@ -204,9 +204,12 @@ function simulaVendita() {
     // Calcolo percentuale
     let commissioni = valoreVendita * commissioniPerc;
 
+    let minimoApplicato = false;
+
     // Applica minimo
     if (commissioni < commissioneMinima) {
         commissioni = commissioneMinima;
+        minimoApplicato = true;
     }
 
     const totaleIncassato = valoreVendita - speseFisseVend - commissioni;
@@ -214,14 +217,26 @@ function simulaVendita() {
     const totaleSpeso = {{ totale_speso }};
     const guadagnoNetto = totaleIncassato - totaleSpeso;
 
-    document.getElementById("valoreVenditaCell").innerText = valoreVendita.toFixed(0) + " €";
-    document.getElementById("totaleIncassatoCell").innerText = totaleIncassato.toFixed(0) + " €";
+    // 🔵 Aggiorna UI
+    document.getElementById("valoreVenditaCell").innerText =
+        valoreVendita.toFixed(0) + " €";
 
+    document.getElementById("totaleIncassatoCell").innerText =
+        totaleIncassato.toFixed(0) + " €";
+
+    // 🔵 Aggiorna commissioni vendita (mancava!)
+    const commissioniCell = document.querySelector("#commissioniVenditaCell");
+    if (commissioniCell) {
+        commissioniCell.innerHTML =
+            commissioni.toFixed(2) + " €" +
+            (minimoApplicato ? " <span style='color:#1e88e5; font-size:20px;'>(minimo)</span>" : "");
+    }
+
+    // 🔵 Aggiorna guadagno netto
     const guadagnoCell = document.getElementById("guadagnoNettoCell");
     guadagnoCell.innerText = guadagnoNetto.toFixed(0) + " €";
     guadagnoCell.className = guadagnoNetto >= 0 ? "positivo" : "negativo";
 }
 </script>
-
 </body>
 </html>
