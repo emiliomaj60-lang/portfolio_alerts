@@ -149,9 +149,13 @@
     ">
         <h2 style="margin-top:0; color:#0d47a1;">📊 RIEPILOGO PORTAFOGLIO</h2>
 
-        <p><b>Totale Speso:</b> {{ totale_speso_portafoglio|round(1) }} €</p>
+        <p><b>Totale Speso:</b>
+        {{ "{:,.1f}".format(totale_speso_portafoglio).replace(",", "X").replace(".", ",").replace("X", ".") }} €
+        </p>
 
-        <p><b>Totale Incassabile:</b> {{ totale_incassato_portafoglio|round(1) }} €</p>
+        <p><b>Totale Incassabile:</b>
+        {{ "{:,.1f}".format(totale_incassato_portafoglio).replace(",", "X").replace(".", ",").replace("X", ".") }} €
+        </p>
 
         <p>
             <b>Guadagno Totale:</b>
