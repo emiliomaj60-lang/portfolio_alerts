@@ -151,4 +151,24 @@ tr:hover {
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
+
+
+/* ----------------------------------------------------
+   FILIGRANA ICONA SULLO SFONDO (PAGINA PRINCIPALE)
+---------------------------------------------------- */
+body::after {
+    content: "";
+    position: fixed;
+    bottom: 30px;          /* distanza dal fondo */
+    right: 30px;           /* distanza dal lato destro */
+    width: 220px;          /* dimensione icona */
+    height: 220px;
+    background-image: url("/static/icons/icon-192.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 0.06;         /* trasparenza filigrana */
+    pointer-events: none;  /* non interferisce con i click */
+    z-index: 0;
+}
+
 }
