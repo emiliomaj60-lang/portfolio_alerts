@@ -68,17 +68,12 @@
 
 <div class="container">
 
-    <!-- 🟢 BADGE VERDE (inizialmente nascosto) -->
+    <!-- 🟢 BADGE VERDE -->
     {% if ultimo_aggiornamento != "Mai aggiornato" %}
         <div class="update-success" id="badgeAggiornato" style="display:none;">
             🟢 Dati aggiornati
         </div>
     {% endif %}
-
-    <!-- 🔴 BADGE ROSSO (visibile di default) -->
-    <!--<div class="update-warning" id="badgeNonAggiornato">
-        ⚠ I dati potrebbero non essere aggiornati — premi “Aggiorna Tutti”
-    </div>
 
     <!-- 🕒 ULTIMO AGGIORNAMENTO -->
     <div class="last-update">
@@ -92,37 +87,13 @@
 
     <!-- 🔵 TABELLA PORTAFOGLIO -->
     <table>
-
-<!-- 🔵 RIEPILOGO PORTAFOGLIO -->
-<div class="summary-box" style="
-    margin-top: 40px;
-    padding: 20px;
-    background: #f0f4ff;
-    border-radius: 12px;
-    font-size: 26px;
-">
-    <h2 style="margin-top:0; color:#0d47a1;">📊 RIEPILOGO PORTAFOGLIO</h2>
-
-    <p><b>Totale Speso:</b> {{ totale_speso_portafoglio|round(1) }} €</p>
-
-    <p><b>Totale Incassabile:</b> {{ totale_incassato_portafoglio|round(1) }} €</p>
-
-    <p>
-        <b>Guadagno Totale:</b>
-        <span style="font-weight:bold;
-            color: {% if guadagno_totale >= 0 %}#2e7d32{% else %}#c62828{% endif %};">
-            {{ guadagno_totale|round(1) }} €
-        </span>
-    </p>
-</div>
-
         <tr>
             <th>Nome</th>
             <th>Quantità</th>
             <th>Prezzo Carico</th>
             <th>Prezzo Attuale</th>
             <th>Gain/Loss</th>
-            <th>Dettagli</th>
+            <th>Guadagno Netto</th>
         </tr>
 
         {% for t in portafoglio %}
@@ -131,12 +102,12 @@
 
             <td>{{ t.quantita|int }}</td>
 
-           <td>{{ t.prezzo_carico }} €</td>
+            <td>{{ t.prezzo_carico }} €</td>
 
             <td>
                 {% if t.prezzo_attuale %}
                     {{ t.prezzo_attuale }} €
-               {% else %}
+                {% else %}
                     <span style="color:#999;">n/d</span>
                 {% endif %}
             </td>
@@ -154,11 +125,42 @@
             </td>
 
             <td>
-                <a href="/scheda/{{ t.symbol }}" style="font-size:24px;">📄</a>
+                {% if t.guadagno_netto is not none %}
+                    <a href="/scheda/{{ t.symbol }}"
+                       style="font-size:24px; font-weight:bold;
+                              color:{% if t.guadagno_netto >= 0 %}#2e7d32{% else %}#c62828{% endif %};">
+                        {{ t.guadagno_netto|round(2) }} €
+                    </a>
+                {% else %}
+                    <span style="color:#999;">n/d</span>
+                {% endif %}
             </td>
         </tr>
         {% endfor %}
     </table>
+
+    <!-- 🔵 RIEPILOGO PORTAFOGLIO -->
+    <div class="summary-box" style="
+        margin-top: 40px;
+        padding: 20px;
+        background: #f0f4ff;
+        border-radius: 12px;
+        font-size: 26px;
+    ">
+        <h2 style="margin-top:0; color:#0d47a1;">📊 RIEPILOGO PORTAFOGLIO</h2>
+
+        <p><b>Totale Speso:</b> {{ totale_speso_portafoglio|round(1) }} €</p>
+
+        <p><b>Totale Incassabile:</b> {{ totale_incassato_portafoglio|round(1) }} €</p>
+
+        <p>
+            <b>Guadagno Totale:</b>
+            <span style="font-weight:bold;
+                color: {% if guadagno_totale >= 0 %}#2e7d32{% else %}#c62828{% endif %};">
+                {{ guadagno_totale|round(1) }} €
+            </span>
+        </p>
+    </div>
 
 </div>
 
