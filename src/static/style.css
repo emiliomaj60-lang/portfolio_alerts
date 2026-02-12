@@ -33,21 +33,21 @@ header {
 table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 19px; /* era 16px → +20% */
+    font-size: 19px;
 }
 
 th {
     background: #e3f2fd;
-    padding: 15px; /* era 12px */
+    padding: 15px;
     text-align: left;
     border-bottom: 2px solid #90caf9;
-    font-size: 20px; /* leggermente più grande */
+    font-size: 20px;
 }
 
 td {
-    padding: 14px; /* era 10px */
+    padding: 14px;
     border-bottom: 1px solid #ddd;
-    font-size: 19px; /* era 16px */
+    font-size: 19px;
 }
 
 tr:hover {
@@ -76,13 +76,13 @@ tr:hover {
 }
 
 .refresh-all-btn {
-    padding: 18px 30px; /* era 12px 22px */
+    padding: 18px 30px;
     background: #1e88e5;
     color: white;
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    font-size: 27px; /* era 18px → +50% */
+    font-size: 27px;
     font-weight: bold;
     transition: background 0.2s ease;
 }
@@ -122,7 +122,7 @@ tr:hover {
 ---------------------------------------------------- */
 .update-warning {
     text-align: center;
-    font-size: 30px; /* era 20px */
+    font-size: 30px;
     color: #c62828;
     margin-bottom: 10px;
     font-weight: bold;
@@ -130,7 +130,7 @@ tr:hover {
 
 .update-success {
     text-align: center;
-    font-size: 30px; /* era 20px */
+    font-size: 30px;
     color: #2e7d32;
     margin-bottom: 10px;
     font-weight: bold;
@@ -142,7 +142,7 @@ tr:hover {
    ULTIMO AGGIORNAMENTO (+50%)
 ---------------------------------------------------- */
 .last-update {
-    font-size: 30px; /* era ~20px */
+    font-size: 30px;
     text-align: center;
     margin: 20px 0;
 }
@@ -151,7 +151,7 @@ tr:hover {
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
-
+}
 
 /* ----------------------------------------------------
    FILIGRANA ICONA SULLO SFONDO (PAGINA PRINCIPALE)
@@ -159,15 +159,14 @@ tr:hover {
 body::after {
     content: "";
     position: fixed;
-    bottom: 30px;          /* distanza dal fondo */
-    right: 30px;           /* distanza dal lato destro */
-    width: 220px;          /* dimensione icona */
+    bottom: 30px;
+    right: 30px;
+    width: 220px;
     height: 220px;
     background-image: url("/static/icons/icon-192.png");
     background-size: contain;
     background-repeat: no-repeat;
-    opacity: 0.06;         /* trasparenza filigrana */
-    pointer-events: none;  /* non interferisce con i click */
-    z-index: 0;
+    opacity: 0.06;
+    pointer-events: none;
+    z-index: 5;
 }
-
