@@ -35,26 +35,71 @@ def index():
     portafoglio = carica_portafoglio_da_csv("data/portfolio.csv")
     titoli = portafoglio.lista_titoli()
 
-    # Carichiamo i prezzi salvati
     prezzi_salvati = carica_prezzi_attuali()
+    costi = carica_costi_gestione()
+
+    # Totali del portafoglio
+    totale_speso_portafoglio = 0
+    totale_incassato_portafoglio = 0
 
     # Applichiamo i prezzi e calcoliamo gain/loss
     for t in titoli:
+
+        # --- PREZZO ATTUALE ---
         if t.symbol in prezzi_salvati:
             t.prezzo_attuale = prezzi_salvati[t.symbol]
+        else:
+            t.prezzo_attuale = None
 
+        # --- GAIN/LOSS PERCENTUALE ---
+        if t.prezzo_attuale:
             try:
                 t.gain_loss = ((t.prezzo_attuale - t.prezzo_carico) / t.prezzo_carico) * 100
             except:
                 t.gain_loss = None
         else:
-            t.prezzo_attuale = None
             t.gain_loss = None
+
+        # --- CALCOLI PER IL RIEPILOGO TOTALE ---
+        prezzo_acq = t.prezzo_carico
+        valore_acq = prezzo_acq * t.quantita
+
+        # Commissioni acquisto
+        comm_acq = valore_acq * (costi["commissioni_acquisto"] / 100)
+        if comm_acq < costi["commis_min_acquisto"]:
+            comm_acq = costi["commis_min_acquisto"]
+
+        totale_speso = valore_acq + costi["spese_acquisto"] + comm_acq
+        totale_speso_portafoglio += totale_speso
+
+        # Se non abbiamo prezzo attuale, non possiamo calcolare la vendita
+        if not t.prezzo_attuale:
+            continue
+
+        prezzo_vend = t.prezzo_attuale
+        valore_vend = prezzo_vend * t.quantita
+
+        # Commissioni vendita
+        comm_vend = valore_vend * (costi["commissioni_vendita"] / 100)
+        if comm_vend < costi["commis_min_vendita"]:
+            comm_vend = costi["commis_min_vendita"]
+
+        totale_incassato = valore_vend - costi["spese_vendita"] - comm_vend
+        totale_incassato_portafoglio += totale_incassato
+
+    # Guadagno totale del portafoglio
+    guadagno_totale = totale_incassato_portafoglio - totale_speso_portafoglio
 
     ultimo_agg = leggi_ultimo_aggiornamento()
 
-    return render_template("index.html", portafoglio=titoli, ultimo_aggiornamento=ultimo_agg)
-
+    return render_template(
+        "index.html",
+        portafoglio=titoli,
+        ultimo_aggiornamento=ultimo_agg,
+        totale_speso_portafoglio=round(totale_speso_portafoglio, 2),
+        totale_incassato_portafoglio=round(totale_incassato_portafoglio, 2),
+        guadagno_totale=round(guadagno_totale, 2)
+    )
 
 # ---------------------------------------------------------
 #  AGGIORNA UN SINGOLO TITOLO (scheda)
