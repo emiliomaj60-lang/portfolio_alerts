@@ -127,9 +127,9 @@
             <td>
                 {% if t.guadagno_netto is not none %}
                     <a href="/scheda/{{ t.symbol }}"
-                       style="font-size:24px; font-weight:bold;
+                       style="font-size:26px; font-weight:bold;
                               color:{% if t.guadagno_netto >= 0 %}#2e7d32{% else %}#c62828{% endif %};">
-                        {{ t.guadagno_netto|round(2) }} €
+                        {{ t.guadagno_netto|round(1) }} 
                     </a>
                 {% else %}
                     <span style="color:#999;">n/d</span>
