@@ -16,123 +16,12 @@
 
     <link rel="stylesheet" href="/static/style.css">
 
-<style>
-    .center {
-        text-align: center;
-        margin-bottom: 25px;
-    }
-
-    /* 📊 TABELLA PORTAFOGLIO */
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 25px;
-        font-size: 22px;
-        background: white;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    }
-
-    th {
-        background: #1e88e5;
-        color: white;
-        padding: 14px;
-        text-align: center;
-        font-size: 24px;
-        letter-spacing: 0.5px;
-    }
-
-    td {
-        padding: 16px;
-        text-align: center;
-        border-bottom: 1px solid #e0e0e0;
-    }
-
-    tr:hover {
-        background-color: #f5faff;
-    }
-
-    /* 📈 COLORI GAIN/LOSS */
-    .gain {
-        color: #2e7d32;
-        font-weight: bold;
-    }
-
-    .loss {
-        color: #c62828;
-        font-weight: bold;
-    }
-
-    /* 📦 RIEPILOGO PORTAFOGLIO */
-    .summary-box {
-        margin-top: 40px;
-        padding: 25px;
-        background: #e8f0ff;
-        border-left: 8px solid #1e88e5;
-        border-radius: 12px;
-        font-size: 26px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    }
-
-    .summary-box h2 {
-        margin-top: 0;
-        color: #0d47a1;
-        font-size: 32px;
-    }
-
-    .summary-box p {
-        margin: 12px 0;
-    }
-
-    /* 🔄 BOTTONE AGGIORNA */
-    .refresh-all-btn {
-        background: #1e88e5;
-        color: white;
-        border: none;
-        padding: 14px 28px;
-        font-size: 24px;
-        border-radius: 10px;
-        cursor: pointer;
-        transition: 0.2s;
-    }
-
-    .refresh-all-btn:hover {
-        background: #1565c0;
-    }
-
-    /* 🟢 BADGE AGGIORNATO */
-    .update-success {
-        background: #c8e6c9;
-        color: #2e7d32;
-        padding: 12px;
-        border-radius: 8px;
-        font-size: 22px;
-        margin-bottom: 15px;
-        text-align: center;
-        font-weight: bold;
-    }
-
-    /* 🔴 BADGE NON AGGIORNATO */
-    .update-warning {
-        background: #ffebee;
-        color: #c62828;
-        padding: 12px;
-        border-radius: 8px;
-        font-size: 22px;
-        margin-bottom: 15px;
-        text-align: center;
-        font-weight: bold;
-    }
-
-    /* 🕒 ULTIMO AGGIORNAMENTO */
-    .last-update {
-        font-size: 22px;
-        margin-bottom: 20px;
-        text-align: center;
-        color: #444;
-    }
-</style>
+    <style>
+        .center {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+    </style>
 
     <script>
         function aggiornaTutti() {
