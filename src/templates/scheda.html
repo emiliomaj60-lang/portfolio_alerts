@@ -197,9 +197,18 @@ function simulaVendita() {
     const quantita = {{ titolo.quantita }};
     const speseFisseVend = {{ spese_fisse_vend }};
     const commissioniPerc = {{ costi["commissioni_vendita"] }} / 100;
+    const commissioneMinima = {{ costi["commis_min_vendita"] }};
 
     const valoreVendita = prezzo * quantita;
-    const commissioni = valoreVendita * commissioniPerc;
+
+    // Calcolo percentuale
+    let commissioni = valoreVendita * commissioniPerc;
+
+    // Applica minimo
+    if (commissioni < commissioneMinima) {
+        commissioni = commissioneMinima;
+    }
+
     const totaleIncassato = valoreVendita - speseFisseVend - commissioni;
 
     const totaleSpeso = {{ totale_speso }};
