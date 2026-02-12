@@ -189,7 +189,7 @@ body::after {
     background-image: url("/static/icons/icon-192.png");
     background-size: contain;
     background-repeat: no-repeat;
-    opacity: 0.18;     /* TRASPARENZA */
+    opacity: 0.25;     /* TRASPARENZA */
     pointer-events: none;
     z-index: -1;       /* DIETRO AL CONTENUTO, DAVANTI ALLO SFONDO */
 }
