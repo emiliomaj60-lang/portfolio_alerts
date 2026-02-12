@@ -141,14 +141,28 @@ def scheda(symbol):
     prezzo_acquisto_unitario = titolo.prezzo_carico
     valore_acquisto = prezzo_acquisto_unitario * titolo.quantita
     spese_fisse_acq = costi["spese_acquisto"]
+
+    # Calcolo percentuale
     commissioni_acq = valore_acquisto * (costi["commissioni_acquisto"] / 100)
+
+    # Applica minimo
+    if commissioni_acq < costi["commis_min_acquisto"]:
+        commissioni_acq = costi["commis_min_acquisto"]
+
     totale_speso = valore_acquisto + spese_fisse_acq + commissioni_acq
 
     # --- VENDITA ---
     prezzo_vendita_unitario = prezzo_attuale
     valore_vendita = prezzo_vendita_unitario * titolo.quantita
     spese_fisse_vend = costi["spese_vendita"]
+
+    # Calcolo percentuale
     commissioni_vend = valore_vendita * (costi["commissioni_vendita"] / 100)
+
+    # Applica minimo
+    if commissioni_vend < costi["commis_min_vendita"]:
+        commissioni_vend = costi["commis_min_vendita"]
+
     totale_incassato = valore_vendita - spese_fisse_vend - commissioni_vend
 
     # --- GUADAGNO NETTO ---
