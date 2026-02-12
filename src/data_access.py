@@ -16,8 +16,10 @@ def carica_costi_gestione(path="data/costi_gestione.csv"):
             "commissioni_acquisto": float(row["commissioni_acquisto"]),
             "spese_vendita": float(row["spese_vendita"]),
             "commissioni_vendita": float(row["commissioni_vendita"])
-        }
+            "commis_min_acquisto": float(row["commis_min_acquisto"]),
+            "commis_min_vendita": float(row["commis_min_vendita"])
 
+        }
 
 # ---------------------------------------------------------
 #  CARICA PORTAFOGLIO (CSV PULITO)
