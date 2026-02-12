@@ -28,30 +28,38 @@ header {
 }
 
 /* ----------------------------------------------------
-   TABELLA (+20% righe)
+   TABELLA MIGLIORATA
 ---------------------------------------------------- */
 table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 19px; /* era 16px → +20% */
+    font-size: 20px;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-top: 25px;
 }
 
 th {
-    background: #e3f2fd;
-    padding: 15px; /* era 12px */
-    text-align: left;
-    border-bottom: 2px solid #90caf9;
-    font-size: 20px; /* leggermente più grande */
+    background: #1e88e5;
+    color: white;
+    padding: 16px;
+    text-align: center;
+    border-bottom: 3px solid #1565c0;
+    font-size: 22px;
+    letter-spacing: 0.5px;
 }
 
 td {
-    padding: 14px; /* era 10px */
-    border-bottom: 1px solid #ddd;
-    font-size: 19px; /* era 16px */
+    padding: 16px;
+    text-align: center;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 20px;
 }
 
 tr:hover {
-    background: #f1f8ff;
+    background: #f5faff;
 }
 
 /* ----------------------------------------------------
