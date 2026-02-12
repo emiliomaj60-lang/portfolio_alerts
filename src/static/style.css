@@ -170,3 +170,26 @@ body::after {
     pointer-events: none;
     z-index: 5;
 }
+/* ----------------------------------------------------
+   FILIGRANA ICONA SULLO SFONDO (IN BASSO)
+---------------------------------------------------- */
+body {
+    position: relative;
+    z-index: 0;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    bottom: 20px;      /* FILIGRANA IN BASSO */
+    left: 50%;         /* CENTRATA ORIZZONTALMENTE */
+    transform: translateX(-50%);
+    width: 260px;
+    height: 260px;
+    background-image: url("/static/icons/icon-192.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 0.08;     /* TRASPARENZA */
+    pointer-events: none;
+    z-index: -1;       /* DIETRO AL CONTENUTO, DAVANTI ALLO SFONDO */
+}
