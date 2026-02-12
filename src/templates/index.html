@@ -105,13 +105,13 @@
 
     <p><b>Totale Speso:</b> {{ totale_speso_portafoglio|round(1) }} €</p>
 
-    <p><b>Totale Incassabile (ai prezzi attuali):</b> {{ totale_incassato_portafoglio|round(1) }} €</p>
+    <p><b>Totale Incassabile:</b> {{ totale_incassato_portafoglio|round(1) }} €</p>
 
     <p>
         <b>Guadagno Totale:</b>
         <span style="font-weight:bold;
             color: {% if guadagno_totale >= 0 %}#2e7d32{% else %}#c62828{% endif %};">
-            {{ guadagno_totale }} €
+            {{ guadagno_totale|round(1) }} €
         </span>
     </p>
 </div>
