@@ -74,6 +74,7 @@ def index():
 
         # Se non abbiamo prezzo attuale, non possiamo calcolare la vendita
         if not t.prezzo_attuale:
+            t.guadagno_netto = None
             continue
 
         prezzo_vend = t.prezzo_attuale
@@ -86,6 +87,9 @@ def index():
 
         totale_incassato = valore_vend - costi["spese_vendita"] - comm_vend
         totale_incassato_portafoglio += totale_incassato
+
+        # 🔵 GUADAGNO NETTO PER SINGOLO TITOLO
+        t.guadagno_netto = totale_incassato - totale_speso
 
     # Guadagno totale del portafoglio
     guadagno_totale = totale_incassato_portafoglio - totale_speso_portafoglio
