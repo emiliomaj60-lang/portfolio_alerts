@@ -23,66 +23,33 @@ class Titolo:
         # Valore totale del lotto iniziale
         self.valore_totale = self.quantita * self.prezzo_carico
 
-        # Storico lotti
+        # Storico lotti (per compatibilità)
         self.lotti = [{
             "quantita": self.quantita,
             "prezzo": self.prezzo_carico,
             "data": self.data_acquisto
         }]
 
-    def valore_totale_carico(self):
-        """Valore totale investito (solo prezzo × quantità)."""
-        return self.prezzo_carico * self.quantita
-
-    def __str__(self):
-        return (
-            f"{self.nome} ({self.symbol}) - ISIN: {self.isin}\n"
-            f" Quantità: {self.quantita}\n"
-            f" Prezzo carico: {self.prezzo_carico} €\n"
-            f" Data acquisto: {self.data_acquisto.strftime('%d/%m/%Y')}\n"
-        )
+        # La chiave unica verrà assegnata dal Portafoglio
+        self.chiave = None
 
 
 class Portafoglio:
     def __init__(self):
-        self.titoli = {}   # dict con chiave ISIN
+        self.titoli = {}   # dict con chiave UNICA per ogni lotto
 
     def aggiungi_titolo(self, titolo):
-        isin = titolo.isin
+        # Creiamo una chiave unica per ogni lotto
+        chiave = f"{titolo.isin}_{titolo.data_acquisto.strftime('%Y%m%d')}_{titolo.prezzo_carico}"
 
-        # Se è il primo lotto → aggiungilo
-        if isin not in self.titoli:
-            self.titoli[isin] = titolo
-            return
+        # Salviamo la chiave dentro l'oggetto
+        titolo.chiave = chiave
 
-        # Se esiste già → AGGREGA
-        esistente = self.titoli[isin]
+        # Ogni lotto è indipendente → nessuna aggregazione
+        self.titoli[chiave] = titolo
 
-        q = float(titolo.quantita)
-        p = float(titolo.prezzo_carico)
-
-        # Aggiorna quantità totale
-        esistente.quantita += q
-
-        # Aggiorna valore totale
-        esistente.valore_totale += q * p
-
-        # Prezzo medio ponderato
-        esistente.prezzo_carico = esistente.valore_totale / esistente.quantita
-
-        # Mantieni la data più vecchia
-        if titolo.data_acquisto < esistente.data_acquisto:
-            esistente.data_acquisto = titolo.data_acquisto
-
-        # Aggiungi lotto allo storico
-        esistente.lotti.append({
-            "quantita": q,
-            "prezzo": p,
-            "data": titolo.data_acquisto
-        })
-
-    def get_titolo(self, isin):
-        return self.titoli.get(isin)
+    def get_titolo(self, chiave):
+        return self.titoli.get(chiave)
 
     def lista_titoli(self):
         return list(self.titoli.values())
