@@ -6,6 +6,8 @@ def create_app():
     from routes.portfolio import portfolio_bp
     from routes.api import api_bp
 
+    app.config["PROPAGATE_EXCEPTIONS"] = True
+
     app.register_blueprint(portfolio_bp)
     app.register_blueprint(api_bp, url_prefix="/api")
 
