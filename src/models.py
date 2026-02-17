@@ -20,6 +20,16 @@ class Titolo:
         self.prezzo_attuale = None
         self.gain_loss = None
 
+        # Valore totale del lotto iniziale
+        self.valore_totale = self.quantita * self.prezzo_carico
+
+        # Storico lotti
+        self.lotti = [{
+            "quantita": self.quantita,
+            "prezzo": self.prezzo_carico,
+            "data": self.data_acquisto
+        }]
+
     def valore_totale_carico(self):
         """Valore totale investito (solo prezzo × quantità)."""
         return self.prezzo_carico * self.quantita
@@ -35,20 +45,44 @@ class Titolo:
 
 class Portafoglio:
     def __init__(self):
-        self.titoli = {}
+        self.titoli = {}   # dict con chiave ISIN
 
     def aggiungi_titolo(self, titolo):
-        """Aggiunge un titolo al portafoglio usando ISIN come chiave."""
-        self.titoli[titolo.isin] = titolo
+        isin = titolo.isin
+
+        # Se è il primo lotto → aggiungilo
+        if isin not in self.titoli:
+            self.titoli[isin] = titolo
+            return
+
+        # Se esiste già → AGGREGA
+        esistente = self.titoli[isin]
+
+        q = float(titolo.quantita)
+        p = float(titolo.prezzo_carico)
+
+        # Aggiorna quantità totale
+        esistente.quantita += q
+
+        # Aggiorna valore totale
+        esistente.valore_totale += q * p
+
+        # Prezzo medio ponderato
+        esistente.prezzo_carico = esistente.valore_totale / esistente.quantita
+
+        # Mantieni la data più vecchia
+        if titolo.data_acquisto < esistente.data_acquisto:
+            esistente.data_acquisto = titolo.data_acquisto
+
+        # Aggiungi lotto allo storico
+        esistente.lotti.append({
+            "quantita": q,
+            "prezzo": p,
+            "data": titolo.data_acquisto
+        })
 
     def get_titolo(self, isin):
         return self.titoli.get(isin)
 
     def lista_titoli(self):
         return list(self.titoli.values())
-
-    def stampa_riepilogo(self):
-        print("\n=== RIEPILOGO PORTAFOGLIO ===\n")
-        for titolo in self.lista_titoli():
-            print(titolo)
-            print("-" * 40)
