@@ -38,20 +38,15 @@ def index():
     prezzi_salvati = carica_prezzi_attuali()
     costi = carica_costi_gestione()
 
-    # Totali del portafoglio
     totale_speso_portafoglio = 0
     totale_incassato_portafoglio = 0
 
-    # Applichiamo i prezzi e calcoliamo gain/loss
     for t in titoli:
 
         # --- PREZZO ATTUALE ---
-        if t.symbol in prezzi_salvati:
-            t.prezzo_attuale = prezzi_salvati[t.symbol]
-        else:
-            t.prezzo_attuale = None
+        t.prezzo_attuale = prezzi_salvati.get(t.symbol, None)
 
-        # --- GAIN/LOSS PERCENTUALE ---
+        # --- GAIN/LOSS ---
         if t.prezzo_attuale:
             try:
                 t.gain_loss = ((t.prezzo_attuale - t.prezzo_carico) / t.prezzo_carico) * 100
@@ -60,11 +55,9 @@ def index():
         else:
             t.gain_loss = None
 
-        # --- CALCOLI PER IL RIEPILOGO TOTALE ---
-        prezzo_acq = t.prezzo_carico
-        valore_acq = prezzo_acq * t.quantita
+        # --- CALCOLI ACQUISTO ---
+        valore_acq = t.prezzo_carico * t.quantita
 
-        # Commissioni acquisto
         comm_acq = valore_acq * (costi["commissioni_acquisto"] / 100)
         if comm_acq < costi["commis_min_acquisto"]:
             comm_acq = costi["commis_min_acquisto"]
@@ -72,15 +65,14 @@ def index():
         totale_speso = valore_acq + costi["spese_acquisto"] + comm_acq
         totale_speso_portafoglio += totale_speso
 
-        # Se non abbiamo prezzo attuale, non possiamo calcolare la vendita
+        # --- SE NON HO PREZZO ATTUALE ---
         if not t.prezzo_attuale:
             t.guadagno_netto = None
             continue
 
-        prezzo_vend = t.prezzo_attuale
-        valore_vend = prezzo_vend * t.quantita
+        # --- CALCOLI VENDITA ---
+        valore_vend = t.prezzo_attuale * t.quantita
 
-        # Commissioni vendita
         comm_vend = valore_vend * (costi["commissioni_vendita"] / 100)
         if comm_vend < costi["commis_min_vendita"]:
             comm_vend = costi["commis_min_vendita"]
@@ -88,12 +80,9 @@ def index():
         totale_incassato = valore_vend - costi["spese_vendita"] - comm_vend
         totale_incassato_portafoglio += totale_incassato
 
-        # 🔵 GUADAGNO NETTO PER SINGOLO TITOLO
         t.guadagno_netto = totale_incassato - totale_speso
 
-    # Guadagno totale del portafoglio
     guadagno_totale = totale_incassato_portafoglio - totale_speso_portafoglio
-
     ultimo_agg = leggi_ultimo_aggiornamento()
 
     return render_template(
@@ -105,8 +94,9 @@ def index():
         guadagno_totale=round(guadagno_totale, 2)
     )
 
+
 # ---------------------------------------------------------
-#  AGGIORNA UN SINGOLO TITOLO (scheda)
+#  AGGIORNA UN SINGOLO TITOLO
 # ---------------------------------------------------------
 @portfolio_bp.route("/refresh/<symbol>")
 def refresh_price(symbol):
@@ -123,7 +113,7 @@ def refresh_price(symbol):
 
 
 # ---------------------------------------------------------
-#  AGGIORNA TUTTI I TITOLI (bottone homepage)
+#  AGGIORNA TUTTI I TITOLI
 # ---------------------------------------------------------
 @portfolio_bp.route("/aggiorna_tutti")
 def aggiorna_tutti():
@@ -141,10 +131,7 @@ def aggiorna_tutti():
         if prezzo is not None:
             prezzi[t.symbol] = prezzo
 
-    # Salviamo i prezzi aggiornati
     salva_prezzi_attuali(prezzi)
-
-    # Salviamo l’ora dell’aggiornamento
     salva_ultimo_aggiornamento()
 
     return jsonify({"status": "ok"})
@@ -153,36 +140,20 @@ def aggiorna_tutti():
 # ---------------------------------------------------------
 #  PAGINA SCHEDA RIASSUNTIVA
 # ---------------------------------------------------------
-@portfolio_bp.route("/scheda/<symbol>")
-def scheda(symbol):
+@portfolio_bp.route("/scheda/<chiave>")
+def scheda(chiave):
     portafoglio = carica_portafoglio_da_csv("data/portfolio.csv")
-    titoli = portafoglio.lista_titoli()
 
-    titolo = next((t for t in titoli if t.symbol == symbol), None)
-
+    titolo = portafoglio.get_titolo(chiave)
     if not titolo:
         return "Titolo non trovato", 404
 
-    # 🔵 FORMATTAZIONE DATA ACQUISTO IN STILE ITALIANO
-    data_raw = str(titolo.data_acquisto).strip()
+    # Format data
+    titolo.data_acquisto = titolo.data_acquisto.strftime("%d/%m/%Y")
 
-    try:
-        # Caso: "2024-05-12 00:00:00"
-        dt = datetime.strptime(data_raw, "%Y-%m-%d %H:%M:%S")
-        titolo.data_acquisto = dt.strftime("%d/%m/%Y")
-    except:
-        try:
-            # Caso: "2024-05-12"
-            dt = datetime.strptime(data_raw, "%Y-%m-%d")
-            titolo.data_acquisto = dt.strftime("%d/%m/%Y")
-        except:
-            # Se arriva già formattata o in altro formato, la lasciamo così
-            pass
-
-    # Aggiorniamo il prezzo solo per la scheda
-    api_symbol = symbol if "." in symbol else symbol + ".MI"
-    prezzo_attuale = get_price(api_symbol)
-    titolo.prezzo_attuale = prezzo_attuale
+    # Aggiorna prezzo
+    api_symbol = titolo.symbol if "." in titolo.symbol else titolo.symbol + ".MI"
+    titolo.prezzo_attuale = get_price(api_symbol)
 
     costi = carica_costi_gestione()
 
@@ -191,30 +162,23 @@ def scheda(symbol):
     valore_acquisto = prezzo_acquisto_unitario * titolo.quantita
     spese_fisse_acq = costi["spese_acquisto"]
 
-    # Calcolo percentuale
     commissioni_acq = valore_acquisto * (costi["commissioni_acquisto"] / 100)
-
-    # Applica minimo
     if commissioni_acq < costi["commis_min_acquisto"]:
         commissioni_acq = costi["commis_min_acquisto"]
 
     totale_speso = valore_acquisto + spese_fisse_acq + commissioni_acq
 
     # --- VENDITA ---
-    prezzo_vendita_unitario = prezzo_attuale
+    prezzo_vendita_unitario = titolo.prezzo_attuale
     valore_vendita = prezzo_vendita_unitario * titolo.quantita
     spese_fisse_vend = costi["spese_vendita"]
 
-    # Calcolo percentuale
     commissioni_vend = valore_vendita * (costi["commissioni_vendita"] / 100)
-
-    # Applica minimo
     if commissioni_vend < costi["commis_min_vendita"]:
         commissioni_vend = costi["commis_min_vendita"]
 
     totale_incassato = valore_vendita - spese_fisse_vend - commissioni_vend
 
-    # --- GUADAGNO NETTO ---
     guadagno_netto = totale_incassato - totale_speso
 
     return render_template(
