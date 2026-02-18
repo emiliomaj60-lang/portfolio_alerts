@@ -247,3 +247,33 @@ def gestione_portafoglio():
     portafoglio = carica_portafoglio_da_csv("data/portfolio.csv")
     titoli = portafoglio.lista_titoli()
     return render_template("gestione_portafoglio.html", titoli=titoli)
+
+@portfolio_bp.route("/gestione_portafoglio/duplicate", methods=["POST"])
+def gestione_duplicate():
+    import csv
+    from flask import request
+
+    chiave = request.form["chiave"]
+
+    righe = []
+    riga_da_dup = None
+
+    # Leggi tutte le righe
+    with open("data/portfolio.csv", "r") as f:
+        reader = csv.reader(f)
+        for r in reader:
+            righe.append(r)
+            if r[1] == chiave:  # symbol come chiave
+                riga_da_dup = r
+
+    # Duplica la riga
+    if riga_da_dup:
+        righe.append(riga_da_dup)
+
+    # Riscrivi il CSV
+    with open("data/portfolio.csv", "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerows(righe)
+
+    return jsonify({"status": "ok"})
+
