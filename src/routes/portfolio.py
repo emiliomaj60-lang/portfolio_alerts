@@ -239,3 +239,11 @@ def scheda(chiave):
         totale_incassato=totale_incassato,
         guadagno_netto=guadagno_netto
     )
+# ---------------------------------------------------------
+#  GESTIONE PORTAFOGLIO (CRUD su CSV)
+# ---------------------------------------------------------
+@portfolio_bp.route("/gestione_portafoglio")
+def gestione_portafoglio():
+    portafoglio = carica_portafoglio_da_csv("data/portfolio.csv")
+    titoli = portafoglio.lista_titoli()
+    return render_template("gestione_portafoglio.html", titoli=titoli)
