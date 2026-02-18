@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, jsonify
+from flask import Blueprint, render_template, jsonify, request
 from data_access import (
     carica_portafoglio_da_csv,
     carica_costi_gestione,
@@ -7,10 +7,10 @@ from data_access import (
 )
 from market_api import get_price, get_price_yf
 from datetime import datetime
+import csv
 import os
 
 portfolio_bp = Blueprint("portfolio", __name__)
-
 
 # ---------------------------------------------------------
 #  GESTIONE FILE ULTIMO AGGIORNAMENTO
@@ -25,7 +25,6 @@ def leggi_ultimo_aggiornamento():
             return f.read().strip()
     except:
         return "Mai aggiornato"
-
 
 # ---------------------------------------------------------
 #  HOMEPAGE PORTAFOGLIO
@@ -94,7 +93,6 @@ def index():
         guadagno_totale=round(guadagno_totale, 2)
     )
 
-
 # ---------------------------------------------------------
 #  AGGIORNA UN SINGOLO TITOLO
 # ---------------------------------------------------------
@@ -110,7 +108,6 @@ def refresh_price(symbol):
         "symbol": original_symbol,
         "prezzo": prezzo
     })
-
 
 # ---------------------------------------------------------
 #  AGGIORNA TUTTI I TITOLI (RapidAPI)
@@ -136,7 +133,6 @@ def aggiorna_tutti():
 
     return jsonify({"status": "ok"})
 
-
 # ---------------------------------------------------------
 #  AGGIORNA TUTTI I TITOLI (yfinance)
 # ---------------------------------------------------------
@@ -161,7 +157,6 @@ def aggiorna_tutti_yf():
 
     return jsonify({"status": "ok"})
 
-
 # ---------------------------------------------------------
 #  PAGINA SCHEDA RIASSUNTIVA
 # ---------------------------------------------------------
@@ -179,17 +174,12 @@ def scheda(chiave):
     # Aggiorna prezzo con fallback
     api_symbol = titolo.symbol if "." in titolo.symbol else titolo.symbol + ".MI"
 
-    # 1) Prova RapidAPI
     prezzo = get_price(api_symbol)
-
-    # 2) Se RapidAPI fallisce → usa yfinance
     if prezzo is None:
-        from market_api import get_price_yf
         prezzo = get_price_yf(api_symbol)
 
     titolo.prezzo_attuale = prezzo
 
-    # Se ancora None → impossibile calcolare
     if titolo.prezzo_attuale is None:
         return render_template(
             "scheda.html",
@@ -239,6 +229,7 @@ def scheda(chiave):
         totale_incassato=totale_incassato,
         guadagno_netto=guadagno_netto
     )
+
 # ---------------------------------------------------------
 #  GESTIONE PORTAFOGLIO (CRUD su CSV)
 # ---------------------------------------------------------
@@ -248,32 +239,40 @@ def gestione_portafoglio():
     titoli = portafoglio.lista_titoli()
     return render_template("gestione_portafoglio.html", titoli=titoli)
 
-@portfolio_bp.route("/gestione_portafoglio/duplicate", methods=["POST"])
-def gestione_duplicate():
-    import csv
-    from flask import request
+# --- AGGIUNGI TITOLO ---
+@portfolio_bp.route("/gestione_portafoglio/add", methods=["POST"])
+def gestione_add():
+    nuovo = [
+        request.form["isin"],
+        request.form["symbol"],
+        request.form["nome"],
+        request.form["quantita"],
+        request.form["prezzo_carico"],
+        request.form["data_acquisto"]
+    ]
 
-    chiave = request.form["chiave"]
-
-    righe = []
-    riga_da_dup = None
-
-    # Leggi tutte le righe
-    with open("data/portfolio.csv", "r") as f:
-        reader = csv.reader(f)
-        for r in reader:
-            righe.append(r)
-            if r[1] == chiave:  # symbol come chiave
-                riga_da_dup = r
-
-    # Duplica la riga
-    if riga_da_dup:
-        righe.append(riga_da_dup)
-
-    # Riscrivi il CSV
-    with open("data/portfolio.csv", "w", newline="") as f:
+    with open("data/portfolio.csv", "a", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
-        writer.writerows(righe)
+        writer.writerow(nuovo)
 
     return jsonify({"status": "ok"})
 
+# --- ELIMINA TITOLO ---
+@portfolio_bp.route("/gestione_portafoglio/delete", methods=["POST"])
+def gestione_delete():
+    chiave = request.form["chiave"]  # symbol
+
+    righe = []
+    with open("data/portfolio.csv", "r", encoding="utf-8") as f:
+        reader = csv.reader(f)
+        header = next(reader)
+        for r in reader:
+            if r[1] != chiave:  # symbol è la seconda colonna
+                righe.append(r)
+
+    with open("data/portfolio.csv", "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(header)
+        writer.writerows(righe)
+
+    return jsonify({"status": "ok"})
