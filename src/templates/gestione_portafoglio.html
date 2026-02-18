@@ -45,7 +45,16 @@
             margin-right: 5px;
 
         }
-
+        .btn-duplicate {
+            background: #0288d1;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 18px;
+            margin-left: 5px;
+        }
         .form-box {
             background: #eef3ff;
             padding: 30px;
@@ -95,6 +104,7 @@
         <tr>
             <th>Nome</th>
             <th>Symbol</th>
+            <th>ISIN</th>
             <th>Quantità</th>
             <th>Prezzo Carico</th>
             <th>Data Acquisto</th>
@@ -105,12 +115,14 @@
         <tr>
             <td>{{ t.nome }}</td>
             <td>{{ t.symbol }}</td>
+            <td>{{ t.isin }}</td>
             <td>{{ t.quantita }}</td>
             <td>{{ t.prezzo_carico }}</td>
             <td>{{ t.data_acquisto.strftime("%d/%m/%Y") }}</td>
             <td>
                 <button class="btn-edit" onclick="editRow('{{ t.symbol }}')">✏️</button>
                 <button class="btn-delete" onclick="deleteRow('{{ t.symbol }}')">🗑️</button>
+                <button class="btn-duplicate" onclick="duplicateRow('{{ t.symbol }}')">📄</button>
             </td>
         </tr>
         {% endfor %}
@@ -156,6 +168,16 @@ function deleteRow(symbol) {
 function editRow(symbol) {
     alert("Per ora la modifica è semplice: cancella e reinserisci.\nSe vuoi preparo un popup elegante per la modifica.");
 }
+function duplicateRow(symbol) {
+    let fd = new FormData();
+    fd.append("chiave", symbol);
+
+    fetch("/gestione_portafoglio/duplicate", {
+        method: "POST",
+        body: fd
+    }).then(() => location.reload());
+}
+
 </script>
 
 </body>
