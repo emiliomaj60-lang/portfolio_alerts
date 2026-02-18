@@ -176,9 +176,26 @@ def scheda(chiave):
     # Format data
     titolo.data_acquisto = titolo.data_acquisto.strftime("%d/%m/%Y")
 
-    # Aggiorna prezzo
+    # Aggiorna prezzo con fallback
     api_symbol = titolo.symbol if "." in titolo.symbol else titolo.symbol + ".MI"
-    titolo.prezzo_attuale = get_price(api_symbol)
+
+    # 1) Prova RapidAPI
+    prezzo = get_price(api_symbol)
+
+    # 2) Se RapidAPI fallisce → usa yfinance
+    if prezzo is None:
+        from market_api import get_price_yf
+        prezzo = get_price_yf(api_symbol)
+
+    titolo.prezzo_attuale = prezzo
+
+    # Se ancora None → impossibile calcolare
+    if titolo.prezzo_attuale is None:
+        return render_template(
+            "scheda.html",
+            titolo=titolo,
+            errore="Prezzo non disponibile (RapidAPI e yfinance falliti)"
+        )
 
     costi = carica_costi_gestione()
 
@@ -198,7 +215,7 @@ def scheda(chiave):
     valore_vendita = prezzo_vendita_unitario * titolo.quantita
     spese_fisse_vend = costi["spese_vendita"]
 
-    commissioni_vend = valore_vendita * (costi["commissionioni_vendita"] / 100)
+    commissioni_vend = valore_vendita * (costi["commissioni_vendita"] / 100)
     if commissioni_vend < costi["commis_min_vendita"]:
         commissioni_vend = costi["commis_min_vendita"]
 
