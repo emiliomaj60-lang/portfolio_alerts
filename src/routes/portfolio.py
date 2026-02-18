@@ -5,7 +5,7 @@ from data_access import (
     carica_prezzi_attuali,
     salva_prezzi_attuali
 )
-from market_api import get_price
+from market_api import get_price, get_price_yf
 from datetime import datetime
 import os
 
@@ -113,7 +113,7 @@ def refresh_price(symbol):
 
 
 # ---------------------------------------------------------
-#  AGGIORNA TUTTI I TITOLI
+#  AGGIORNA TUTTI I TITOLI (RapidAPI)
 # ---------------------------------------------------------
 @portfolio_bp.route("/aggiorna_tutti")
 def aggiorna_tutti():
@@ -127,6 +127,31 @@ def aggiorna_tutti():
         prezzo = get_price(api_symbol)
 
         print("DEBUG →", t.symbol, "=", prezzo)
+
+        if prezzo is not None:
+            prezzi[t.symbol] = prezzo
+
+    salva_prezzi_attuali(prezzi)
+    salva_ultimo_aggiornamento()
+
+    return jsonify({"status": "ok"})
+
+
+# ---------------------------------------------------------
+#  AGGIORNA TUTTI I TITOLI (yfinance)
+# ---------------------------------------------------------
+@portfolio_bp.route("/aggiorna_tutti_yf")
+def aggiorna_tutti_yf():
+    portafoglio = carica_portafoglio_da_csv("data/portfolio.csv")
+    titoli = portafoglio.lista_titoli()
+
+    prezzi = {}
+
+    for t in titoli:
+        api_symbol = t.symbol if "." in t.symbol else t.symbol + ".MI"
+        prezzo = get_price_yf(api_symbol)
+
+        print("DEBUG → YF", t.symbol, "=", prezzo)
 
         if prezzo is not None:
             prezzi[t.symbol] = prezzo
@@ -173,7 +198,7 @@ def scheda(chiave):
     valore_vendita = prezzo_vendita_unitario * titolo.quantita
     spese_fisse_vend = costi["spese_vendita"]
 
-    commissioni_vend = valore_vendita * (costi["commissioni_vendita"] / 100)
+    commissioni_vend = valore_vendita * (costi["commissionioni_vendita"] / 100)
     if commissioni_vend < costi["commis_min_vendita"]:
         commissioni_vend = costi["commis_min_vendita"]
 
