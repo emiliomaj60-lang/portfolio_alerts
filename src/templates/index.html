@@ -34,6 +34,16 @@
                 });
         }
 
+        function aggiornaTuttiYF() {
+            fetch("/aggiorna_tutti_yf?" + Date.now())
+                .then(r => r.json())
+                .then(data => {
+                    if (data.status === "ok") {
+                        location.reload(true);
+                    }
+                });
+        }
+
         function mostraBadgeAggiornato() {
             const ultimo = "{{ ultimo_aggiornamento }}";
             if (ultimo === "Mai aggiornato") return;
@@ -80,9 +90,14 @@
         Ultimo aggiornamento: <b>{{ ultimo_aggiornamento }}</b>
     </div>
 
-    <!-- 🔵 BOTTONE AGGIORNA TUTTI -->
+    <!-- 🔵 BOTTONE AGGIORNA TUTTI (RapidAPI) -->
     <div class="center">
         <button class="refresh-all-btn" onclick="aggiornaTutti()">🔄 Aggiorna Tutti</button>
+    </div>
+
+    <!-- 🟣 BOTTONE AGGIORNA TUTTI (yfinance) -->
+    <div class="center">
+        <button class="refresh-all-btn" onclick="aggiornaTuttiYF()">🔄 Aggiorna Tutti (yfinance)</button>
     </div>
 
     <!-- 🔵 TABELLA PORTAFOGLIO -->
