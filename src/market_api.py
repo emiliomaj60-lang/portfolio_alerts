@@ -7,9 +7,9 @@ API_KEY = os.getenv("RAPIDAPI_KEY")
 print("DEBUG → API_KEY:", API_KEY)
 
 # ---------------------------------------------------------
-# 1️⃣ FUNZIONE ORIGINALE: RapidAPI
+# 1️⃣ FUNZIONE ORIGINALE: RapidAPI (comportamento attuale)
 # ---------------------------------------------------------
-def get_price_rapidapi(symbol):
+def get_price(symbol):
     url = "https://yahoo-finance-real-time1.p.rapidapi.com/stock/get-options"
 
     params = {
@@ -42,14 +42,18 @@ def get_price_rapidapi(symbol):
         return None
 
     except Exception as e:
-        print("DEBUG → ERROR RapidAPI:", e)
+        print("DEBUG → ERROR:", e)
         return None
 
 
 # ---------------------------------------------------------
-# 2️⃣ NUOVA FUNZIONE: yfinance (fallback)
+# 2️⃣ NUOVA FUNZIONE: yfinance (NON usata per ora)
 # ---------------------------------------------------------
 def get_price_yf(symbol):
+    """
+    Funzione alternativa per ottenere il prezzo tramite yfinance.
+    NON viene usata da get_price() finché non me lo chiedi tu.
+    """
     try:
         print("DEBUG → yfinance request:", symbol)
 
@@ -67,18 +71,3 @@ def get_price_yf(symbol):
     except Exception as e:
         print("DEBUG → ERROR yfinance:", e)
         return None
-
-
-# ---------------------------------------------------------
-# 3️⃣ FUNZIONE UNIFICATA: prova RapidAPI → fallback yfinance
-# ---------------------------------------------------------
-def get_price(symbol):
-    # 1. Prova RapidAPI
-    prezzo = get_price_rapidapi(symbol)
-    if prezzo is not None:
-        return prezzo
-
-    print("DEBUG → RapidAPI fallita, uso yfinance")
-
-    # 2. Fallback yfinance
-    return get_price_yf(symbol)
