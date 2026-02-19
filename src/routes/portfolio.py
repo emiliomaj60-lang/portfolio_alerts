@@ -242,13 +242,18 @@ def gestione_portafoglio():
 # --- AGGIUNGI TITOLO ---
 @portfolio_bp.route("/gestione_portafoglio/add", methods=["POST"])
 def gestione_add():
+
+    # Converte la data dal form (YYYY-mm-dd) → formato italiano (dd/mm/YYYY)
+    data_form = request.form["data_acquisto"]
+    data_it = datetime.strptime(data_form, "%Y-%m-%d").strftime("%d/%m/%Y")
+
     nuovo = [
         request.form["isin"],
         request.form["symbol"],
         request.form["nome"],
         request.form["quantita"],
         request.form["prezzo_carico"],
-        request.form["data_acquisto"]
+        data_it
     ]
 
     with open("data/portfolio.csv", "a", newline="", encoding="utf-8") as f:
