@@ -242,29 +242,6 @@ def gestione_portafoglio():
 # --- AGGIUNGI TITOLO ---
 @portfolio_bp.route("/gestione_portafoglio/add", methods=["POST"])
 def gestione_add():
-
-    # Converte la data dal form (YYYY-mm-dd) → formato italiano (dd/mm/YYYY)
-    data_form = request.form["data_acquisto"]
-    data_it = datetime.strptime(data_form, "%Y-%m-%d").strftime("%d/%m/%Y")
-
-    nuovo = [
-        request.form["isin"],
-        request.form["symbol"],
-        request.form["nome"],
-        request.form["quantita"],
-        request.form["prezzo_carico"],
-        data_it
-    ]
-
-    with open("data/portfolio.csv", "a", newline="", encoding="utf-8") as f:
-        writer = csv.writer(f)
-        writer.writerow(nuovo)
-
-    return jsonify({"status": "ok"})
-
-# --- ELIMINA TITOLO ---
-@portfolio_bp.route("/gestione_portafoglio/add", methods=["POST"])
-def gestione_add():
     data_form = request.form["data_acquisto"]
     data_it = datetime.strptime(data_form, "%Y-%m-%d").strftime("%d/%m/%Y")
 
@@ -285,6 +262,26 @@ def gestione_add():
 
         writer = csv.writer(f)
         writer.writerow(nuovo)
+
+    return jsonify({"status": "ok"})
+
+# --- ELIMINA TITOLO ---
+@portfolio_bp.route("/gestione_portafoglio/delete", methods=["POST"])
+def gestione_delete():
+    chiave = request.form["chiave"]  # symbol
+
+    righe = []
+    with open("data/portfolio.csv", "r", encoding="utf-8") as f:
+        reader = csv.reader(f)
+        header = next(reader)
+        for r in reader:
+            if r[1] != chiave:  # symbol è la seconda colonna
+                righe.append(r)
+
+    with open("data/portfolio.csv", "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(header)
+        writer.writerows(righe)
 
     return jsonify({"status": "ok"})
 
