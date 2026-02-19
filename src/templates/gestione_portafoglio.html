@@ -181,6 +181,7 @@
 </div>
 
 <script>
+/* --- Aggiungi nuovo titolo --- */
 document.getElementById("addForm").onsubmit = function(e) {
     e.preventDefault();
     fetch("/gestione_portafoglio/add", {
@@ -189,6 +190,7 @@ document.getElementById("addForm").onsubmit = function(e) {
     }).then(() => location.reload());
 };
 
+/* --- Elimina titolo --- */
 function deleteRow(symbol) {
     if (!confirm("Vuoi davvero eliminare questo titolo?")) return;
 
@@ -201,6 +203,34 @@ function deleteRow(symbol) {
     }).then(() => location.reload());
 }
 
+/* --- MENU ⋮ (Modifica / Copia / Elimina) --- */
+document.addEventListener("click", function(e) {
+    const isButton = e.target.classList.contains("menu-button");
+    const dropdowns = document.querySelectorAll(".menu-dropdown");
+
+    // Chiude tutti i menu
+    dropdowns.forEach(d => d.style.display = "none");
+
+    // Se clicco sul bottone ⋮ apro il suo menu
+    if (isButton) {
+        e.stopPropagation();  
+        const menu = e.target.nextElementSibling;
+        if (menu) {
+            menu.style.display = "block";
+        }
+    }
+});
+
+/* --- Modifica --- */
+function editRow(symbol) {
+    window.location.href = `/modifica/${symbol}`;
+}
+
+/* --- Copia --- */
+function copyRow(symbol) {
+    navigator.clipboard.writeText(symbol);
+    alert("Simbolo copiato: " + symbol);
+}
 </script>
 
 </body>
