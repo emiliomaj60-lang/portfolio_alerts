@@ -69,11 +69,11 @@
             width: 180px;
         }
 
-        /* ⭐ CSS DEL MENU ⋮ */
+        /* ⭐ CSS DEL MENU ⋮ — VERSIONE INGRANDITA */
         .actions-cell {
             position: relative;
             text-align: right;
-            width: 40px;
+            width: 120px; /* triplicato */
         }
 
         .menu-container {
@@ -84,9 +84,9 @@
         .menu-button {
             background: none;
             border: none;
-            font-size: 18px;
+            font-size: 36px;   /* era 18px → triplicato */
             cursor: pointer;
-            padding: 0 5px;
+            padding: 6px 12px; /* più grande */
             color: #444;
         }
 
@@ -98,19 +98,21 @@
             display: none;
             position: absolute;
             right: 0;
-            top: 22px;
+            top: 48px; /* era 22px → più spazio sotto i tre puntini */
             background: white;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            min-width: 120px;
+            border: 2px solid #ccc; /* più spesso */
+            border-radius: 10px;    /* più morbido */
+            box-shadow: 0 4px 14px rgba(0,0,0,0.20);
+            min-width: 260px;       /* era 120px → più del doppio */
             z-index: 10;
+            padding: 10px 0;
         }
 
         .menu-item {
-            padding: 8px 12px;
+            padding: 18px 24px; /* era 8px 12px → triplicato */
             cursor: pointer;
-            font-size: 14px;
+            font-size: 22px;    /* era 14px → molto più grande */
+            font-weight: 500;
         }
 
         .menu-item:hover {
