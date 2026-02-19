@@ -281,3 +281,12 @@ def gestione_delete():
         writer.writerows(righe)
 
     return jsonify({"status": "ok"})
+
+@portfolio_bp.route("/debug_csv")
+def debug_csv():
+    out = []
+    with open("data/portfolio.csv", "r", encoding="utf-8") as f:
+        for i, line in enumerate(f, start=1):
+            out.append(f"{i}: {line}")
+    return "<br>".join(out)
+
