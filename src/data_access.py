@@ -7,7 +7,7 @@ from models import Titolo, Portafoglio
 #  CARICA COSTI DI GESTIONE (acquisto + vendita)
 # ---------------------------------------------------------
 def carica_costi_gestione(path="data/costi_gestione.csv"):
-    with open(path, newline="", encoding="utf-8") as f:
+    with open(path, newline="", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
         row = next(reader)
 
@@ -27,7 +27,7 @@ def carica_costi_gestione(path="data/costi_gestione.csv"):
 def carica_portafoglio_da_csv(percorso_file):
     portafoglio = Portafoglio()
 
-    with open(percorso_file, mode="r", encoding="utf-8") as file:
+    with open(percorso_file, mode="r", encoding="utf-8-sig") as file:
         reader = csv.DictReader(file)
 
         for row in reader:
@@ -60,7 +60,7 @@ def salva_prezzi_attuali(prezzi, path="data/prezzi_attuali.csv"):
 
     print("DEBUG → salvo prezzi:", prezzi)
 
-    with open(path, "w", newline="", encoding="utf-8") as f:
+    with open(path, "w", newline="", encoding="utf-8-sig") as f:
         writer = csv.writer(f)
         writer.writerow(["symbol", "prezzo"])
 
@@ -78,7 +78,7 @@ def carica_prezzi_attuali(path="data/prezzi_attuali.csv"):
 
     prezzi = {}
 
-    with open(path, newline="", encoding="utf-8") as f:
+    with open(path, newline="", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
 
         for row in reader:
