@@ -262,18 +262,18 @@ function saveNewRow(button) {
     const row = button.closest("tr");
     const inputs = row.querySelectorAll("input");
 
-    // I tuoi campi sono in quest’ordine:
-    // 0 = ISIN
+    // Ordine reale della tua tabella:
+    // 0 = NOME
     // 1 = SYMBOL
-    // 2 = NOME
+    // 2 = ISIN
     // 3 = QUANTITA
     // 4 = PREZZO CARICO
-    // 5 = DATA ACQUISTO (dd/mm/yyyy)
+    // 5 = DATA ACQUISTO
 
     const data = {
-        isin: inputs[0].value,
+        nome: inputs[0].value,
         symbol: inputs[1].value,
-        nome: inputs[2].value,
+        isin: inputs[2].value,
         quantita: inputs[3].value,
         prezzo_carico: inputs[4].value,
         data_acquisto: inputs[5].value
