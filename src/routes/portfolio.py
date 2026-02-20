@@ -33,12 +33,21 @@ def leggi_ultimo_aggiornamento():
     except:
         return "Mai aggiornato"
 
-# ---------------------------------------------------------
-#  HOMEPAGE PORTAFOGLIO
-# ---------------------------------------------------------
 @portfolio_bp.route("/")
 def index():
-    portafoglio = carica_portafoglio_da_csv("data/portfolio.csv")
+    # 🔥 Legge il CSV direttamente da GitHub
+    g = Github(os.environ["GITHUB_TOKEN"])
+    repo = g.get_repo(GITHUB_REPO)
+    file = repo.get_contents(CSV_PATH)
+
+    csv_text = base64.b64decode(file.content).decode("utf-8")
+
+    # Scrive temporaneamente il CSV in /tmp
+    with open("/tmp/portfolio_temp.csv", "w", encoding="utf-8") as temp:
+        temp.write(csv_text)
+
+    # Usa la tua funzione esistente per creare gli oggetti Titolo
+    portafoglio = carica_portafoglio_da_csv("/tmp/portfolio_temp.csv")
     titoli = portafoglio.lista_titoli()
 
     prezzi_salvati = carica_prezzi_attuali()
@@ -48,11 +57,8 @@ def index():
     totale_incassato_portafoglio = 0
 
     for t in titoli:
-
-        # --- PREZZO ATTUALE ---
         t.prezzo_attuale = prezzi_salvati.get(t.symbol, None)
 
-        # --- GAIN/LOSS ---
         if t.prezzo_attuale:
             try:
                 t.gain_loss = ((t.prezzo_attuale - t.prezzo_carico) / t.prezzo_carico) * 100
@@ -61,7 +67,6 @@ def index():
         else:
             t.gain_loss = None
 
-        # --- CALCOLI ACQUISTO ---
         valore_acq = t.prezzo_carico * t.quantita
 
         comm_acq = valore_acq * (costi["commissioni_acquisto"] / 100)
@@ -71,12 +76,10 @@ def index():
         totale_speso = valore_acq + costi["spese_acquisto"] + comm_acq
         totale_speso_portafoglio += totale_speso
 
-        # --- SE NON HO PREZZO ATTUALE ---
         if not t.prezzo_attuale:
             t.guadagno_netto = None
             continue
 
-        # --- CALCOLI VENDITA ---
         valore_vend = t.prezzo_attuale * t.quantita
 
         comm_vend = valore_vend * (costi["commissioni_vendita"] / 100)
