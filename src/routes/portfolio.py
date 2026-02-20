@@ -305,6 +305,40 @@ def gestione_add():
 
     return jsonify({"status": "ok"})
 
+# --- DUPLICA / AGGIUNGI TITOLO DA COPIA (scrive su GitHub) ---
+@portfolio_bp.route("/gestione_portafoglio/duplicate", methods=["POST"])
+def gestione_duplicate():
+    data = request.get_json()
+
+    nuovo = [
+        data["isin"],
+        data["symbol"],
+        data["nome"],
+        data["quantita"],
+        data["prezzo_carico"],
+        data["data_acquisto"]
+    ]
+
+    g = Github(os.environ["GITHUB_TOKEN"])
+    repo = g.get_repo(GITHUB_REPO)
+
+    # 1️⃣ Leggi CSV da GitHub
+    file = repo.get_contents(CSV_PATH)
+    csv_text = base64.b64decode(file.content).decode("utf-8")
+
+    # 2️⃣ Aggiungi la nuova riga
+    csv_text += "\n" + ",".join(nuovo)
+
+    # 3️⃣ Riscrivi il CSV su GitHub
+    repo.update_file(
+        path=CSV_PATH,
+        message="Duplicato titolo",
+        content=csv_text,
+        sha=file.sha
+    )
+
+    return jsonify({"status": "ok"})
+
 # --- ELIMINA TITOLO (scrive su GitHub) ---
 @portfolio_bp.route("/gestione_portafoglio/delete", methods=["POST"])
 def gestione_delete():
