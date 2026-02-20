@@ -164,12 +164,21 @@ def aggiorna_tutti_yf():
 
     return jsonify({"status": "ok"})
 
-# ---------------------------------------------------------
-#  PAGINA SCHEDA RIASSUNTIVA
-# ---------------------------------------------------------
 @portfolio_bp.route("/scheda/<chiave>")
 def scheda(chiave):
-    portafoglio = carica_portafoglio_da_csv("data/portfolio.csv")
+    # 🔥 Legge il CSV direttamente da GitHub
+    g = Github(os.environ["GITHUB_TOKEN"])
+    repo = g.get_repo(GITHUB_REPO)
+    file = repo.get_contents(CSV_PATH)
+
+    csv_text = base64.b64decode(file.content).decode("utf-8")
+
+    # Scrive temporaneamente il CSV in /tmp
+    with open("/tmp/portfolio_temp.csv", "w", encoding="utf-8") as temp:
+        temp.write(csv_text)
+
+    # Usa la tua funzione esistente per creare gli oggetti Titolo
+    portafoglio = carica_portafoglio_da_csv("/tmp/portfolio_temp.csv")
 
     titolo = portafoglio.get_titolo(chiave)
     if not titolo:
@@ -236,10 +245,6 @@ def scheda(chiave):
         totale_incassato=totale_incassato,
         guadagno_netto=guadagno_netto
     )
-
-# ---------------------------------------------------------
-#  GESTIONE PORTAFOGLIO (CRUD su CSV)
-# ---------------------------------------------------------
 # ---------------------------------------------------------
 #  GESTIONE PORTAFOGLIO (CRUD su CSV GitHub)
 # ---------------------------------------------------------
