@@ -10,6 +10,13 @@ from datetime import datetime
 import csv
 import os
 
+from github import Github
+import base64
+
+GITHUB_REPO = "emiliomaj60-lang/portfolio_alerts"
+CSV_PATH = "data/portfolio.csv"
+
+
 portfolio_bp = Blueprint("portfolio", __name__)
 
 # ---------------------------------------------------------
@@ -233,13 +240,29 @@ def scheda(chiave):
 # ---------------------------------------------------------
 #  GESTIONE PORTAFOGLIO (CRUD su CSV)
 # ---------------------------------------------------------
+# ---------------------------------------------------------
+#  GESTIONE PORTAFOGLIO (CRUD su CSV GitHub)
+# ---------------------------------------------------------
 @portfolio_bp.route("/gestione_portafoglio")
 def gestione_portafoglio():
-    portafoglio = carica_portafoglio_da_csv("data/portfolio.csv")
+    # 🔥 Legge il CSV direttamente da GitHub
+    g = Github(os.environ["GITHUB_TOKEN"])
+    repo = g.get_repo(GITHUB_REPO)
+    file = repo.get_contents(CSV_PATH)
+
+    csv_text = base64.b64decode(file.content).decode("utf-8")
+
+    # Usa la tua funzione esistente per convertire il CSV in oggetti
+    with open("/tmp/portfolio_temp.csv", "w", encoding="utf-8") as temp:
+        temp.write(csv_text)
+
+    portafoglio = carica_portafoglio_da_csv("/tmp/portfolio_temp.csv")
     titoli = portafoglio.lista_titoli()
+
     return render_template("gestione_portafoglio.html", titoli=titoli)
 
-# --- AGGIUNGI TITOLO ---
+
+# --- AGGIUNGI TITOLO (scrive su GitHub) ---
 @portfolio_bp.route("/gestione_portafoglio/add", methods=["POST"])
 def gestione_add():
     data_form = request.form["data_acquisto"]
@@ -254,42 +277,57 @@ def gestione_add():
         data_it
     ]
 
-    with open("data/portfolio.csv", "a", newline="", encoding="utf-8-sig") as f:
-        # 🔥 aggiunge newline se manca
-        f.seek(0, os.SEEK_END)
-        if f.tell() > 0:
-            f.write("\n")
+    g = Github(os.environ["GITHUB_TOKEN"])
+    repo = g.get_repo(GITHUB_REPO)
 
-        writer = csv.writer(f)
-        writer.writerow(nuovo)
+    # 1️⃣ Leggi CSV da GitHub
+    file = repo.get_contents(CSV_PATH)
+    csv_text = base64.b64decode(file.content).decode("utf-8")
+
+    # 2️⃣ Aggiungi la nuova riga
+    csv_text += "\n" + ",".join(nuovo)
+
+    # 3️⃣ Riscrivi il CSV su GitHub
+    repo.update_file(
+        path=CSV_PATH,
+        message="Aggiunto nuovo titolo",
+        content=csv_text,
+        sha=file.sha
+    )
 
     return jsonify({"status": "ok"})
 
-# --- ELIMINA TITOLO ---
+# --- ELIMINA TITOLO (scrive su GitHub) ---
 @portfolio_bp.route("/gestione_portafoglio/delete", methods=["POST"])
 def gestione_delete():
     chiave = request.form["chiave"]  # symbol
 
-    righe = []
-    with open("data/portfolio.csv", "r", encoding="utf-8") as f:
-        reader = csv.reader(f)
-        header = next(reader)
-        for r in reader:
-            if r[1] != chiave:  # symbol è la seconda colonna
-                righe.append(r)
+    g = Github(os.environ["GITHUB_TOKEN"])
+    repo = g.get_repo(GITHUB_REPO)
 
-    with open("data/portfolio.csv", "w", newline="", encoding="utf-8") as f:
-        writer = csv.writer(f)
-        writer.writerow(header)
-        writer.writerows(righe)
+    # 1️⃣ Leggi CSV da GitHub
+    file = repo.get_contents(CSV_PATH)
+    csv_text = base64.b64decode(file.content).decode("utf-8")
+
+    righe = csv_text.splitlines()
+    header = righe[0]
+    corpo = righe[1:]
+
+    # 2️⃣ Filtra le righe (rimuove quella con il symbol)
+    nuove_righe = [header]
+    for r in corpo:
+        cols = r.split(",")
+        if cols[1] != chiave:  # symbol è la seconda colonna
+            nuove_righe.append(r)
+
+    nuovo_csv = "\n".join(nuove_righe)
+
+    # 3️⃣ Riscrivi il CSV su GitHub
+    repo.update_file(
+        path=CSV_PATH,
+        message=f"Eliminato {chiave}",
+        content=nuovo_csv,
+        sha=file.sha
+    )
 
     return jsonify({"status": "ok"})
-
-@portfolio_bp.route("/debug_csv")
-def debug_csv():
-    out = []
-    with open("data/portfolio.csv", "r", encoding="utf-8") as f:
-        for i, line in enumerate(f, start=1):
-            out.append(f"{i}: {line}")
-    return "<br>".join(out)
-
