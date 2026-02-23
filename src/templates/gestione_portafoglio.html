@@ -154,7 +154,6 @@
                 <div class="menu-container">
                     <button class="menu-button">⋮</button>
                     <div class="menu-dropdown">
-                        <div class="menu-item" onclick="editRow('{{ t.symbol }}')">Modifica</div>
                         <div class="menu-item" onclick="duplicateRow(this)">Copia</div>
                         <div class="menu-item" onclick="deleteRow('{{ t.symbol }}')">Elimina</div>
                     </div>
@@ -192,11 +191,11 @@ document.getElementById("addForm").onsubmit = function(e) {
 };
 
 /* --- Elimina titolo --- */
-function deleteRow(symbol) {
+function deleteRow(isin) {
     if (!confirm("Vuoi davvero eliminare questo titolo?")) return;
 
     let fd = new FormData();
-    fd.append("chiave", symbol);
+    fd.append("isin", isin);
 
     fetch("/gestione_portafoglio/delete", {
         method: "POST",
@@ -221,11 +220,6 @@ document.addEventListener("click", function(e) {
         }
     }
 });
-
-/* --- Modifica --- */
-function editRow(symbol) {
-    window.location.href = `/modifica/${symbol}`;
-}
 
 /* --- Copia --- */
 function copyRow(symbol) {
