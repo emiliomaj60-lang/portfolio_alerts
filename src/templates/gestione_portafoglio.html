@@ -155,7 +155,7 @@
                     <button class="menu-button">⋮</button>
                     <div class="menu-dropdown">
                         <div class="menu-item" onclick="duplicateRow(this)">Copia</div>
-                        <div class="menu-item" onclick="deleteRow('{{ t.isin }}')">Elimina</div>
+                        <div class="menu-item" onclick="deleteRow({{ loop.index0 }})">Elimina</div>
                     </div>
                 </div>
             </td>
@@ -189,11 +189,11 @@ document.getElementById("addForm").onsubmit = function(e) {
 };
 
 /* --- Elimina titolo --- */
-function deleteRow(isin) {
+function deleteRow(index) {
     if (!confirm("Vuoi davvero eliminare questo titolo?")) return;
 
     let fd = new FormData();
-    fd.append("isin", isin);
+    fd.append("index", index);
 
     fetch("/gestione_portafoglio/delete", {
         method: "POST",
