@@ -342,7 +342,7 @@ def gestione_duplicate():
 # --- ELIMINA TITOLO (scrive su GitHub) ---
 @portfolio_bp.route("/gestione_portafoglio/delete", methods=["POST"])
 def gestione_delete():
-    index = int(request.form["index"])  # ⭐ ora usiamo l'indice
+    index = int(request.form["index"])
 
     g = Github(os.environ["GITHUB_TOKEN"])
     repo = g.get_repo(GITHUB_REPO)
@@ -356,7 +356,7 @@ def gestione_delete():
 
     nuove_righe = [header]
     for i, r in enumerate(corpo):
-        if i != index:   # ⭐ elimina solo la riga cliccata
+        if i != index:
             nuove_righe.append(r)
 
     nuovo_csv = "\n".join(nuove_righe)
@@ -368,4 +368,4 @@ def gestione_delete():
         sha=file.sha
     )
 
-    return jsonify({"status": "ok"})
+    return ("", 204)   # ⭐ nessun messaggio, nessuna pagina bianca
