@@ -118,6 +118,42 @@
         .menu-item:hover {
             background: #f3f3f3;
         }
+
+        .edit-nome {
+            width: 140px;
+            padding: 4px 6px;
+            text-align: left;
+        }
+
+        .edit-symbol {
+            width: 70px;
+            padding: 4px 6px;
+            text-align: center;
+        }
+
+        .edit-isin {
+            width: 130px;
+            padding: 4px 6px;
+            text-align: center;
+        }
+
+        .edit-quantita {
+            width: 60px;
+            padding: 4px 6px;
+            text-align: right;
+        }
+
+        .edit-prezzo {
+            width: 80px;
+            padding: 4px 6px;
+            text-align: right;
+        }
+
+        .edit-data {
+            width: 110px;
+            padding: 4px 6px;
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -234,7 +270,16 @@ function duplicateRow(button) {
     cells.forEach((cell, index) => {
         if (index < cells.length - 1) {
             const value = cell.innerText.trim();
-            cell.innerHTML = `<input class="form-control" value="${value}">`;
+
+            let cls = "";
+            if (index === 0) cls = "edit-nome";
+            if (index === 1) cls = "edit-symbol";
+            if (index === 2) cls = "edit-isin";
+            if (index === 3) cls = "edit-quantita";
+            if (index === 4) cls = "edit-prezzo";
+            if (index === 5) cls = "edit-data";
+
+            cell.innerHTML = `<input class="${cls}" value="${value}">`;
         }
     });
 
