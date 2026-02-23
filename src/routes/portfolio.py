@@ -358,7 +358,7 @@ def gestione_delete():
     # 2️⃣ Filtra le righe (rimuove solo quella con l'ISIN)
     nuove_righe = [header]
     for r in corpo:
-        cols = r.split(",")
+        cols = [c.strip() for c in r.split(",")]   # ⭐ FIX FONDAMENTALE
         if cols[2] != isin:  # ISIN è la TERZA colonna
             nuove_righe.append(r)
 
