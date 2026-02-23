@@ -342,12 +342,11 @@ def gestione_duplicate():
 # --- ELIMINA TITOLO (scrive su GitHub) ---
 @portfolio_bp.route("/gestione_portafoglio/delete", methods=["POST"])
 def gestione_delete():
-    isin = request.form["isin"]  # ora usiamo ISIN
+    isin = request.form["isin"]
 
     g = Github(os.environ["GITHUB_TOKEN"])
     repo = g.get_repo(GITHUB_REPO)
 
-    # 1️⃣ Leggi CSV da GitHub
     file = repo.get_contents(CSV_PATH)
     csv_text = base64.b64decode(file.content).decode("utf-8")
 
@@ -355,16 +354,14 @@ def gestione_delete():
     header = righe[0]
     corpo = righe[1:]
 
-    # 2️⃣ Filtra le righe (rimuove solo quella con l'ISIN)
     nuove_righe = [header]
     for r in corpo:
-        cols = [c.strip() for c in r.split(",")]   # ⭐ FIX FONDAMENTALE
-        if cols[2] != isin:  # ISIN è la TERZA colonna
+        cols = [c.strip() for c in r.split(",")]
+        if cols[0] != isin:   # ⭐ ISIN È LA PRIMA COLONNA
             nuove_righe.append(r)
 
     nuovo_csv = "\n".join(nuove_righe)
 
-    # 3️⃣ Riscrivi il CSV su GitHub
     repo.update_file(
         path=CSV_PATH,
         message=f"Eliminato {isin}",
