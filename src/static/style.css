@@ -241,3 +241,20 @@ body::after {
     box-shadow: 0 3px 8px rgba(0,0,0,0.15);
     letter-spacing: 1px;
 }
+
+.header-scenografico {
+    background: linear-gradient(to right, #0a3d91, #1565c0, #1e88e5);
+    padding: 28px 0;
+    text-align: center;
+    border-radius: 0 0 18px 18px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+}
+
+.header-scenografico h1 {
+    font-size: 48px;
+    font-weight: 900;
+    color: white;
+    margin: 0;
+    letter-spacing: 2px;
+    text-shadow: 3px 3px 8px rgba(0,0,0,0.45);
+}
