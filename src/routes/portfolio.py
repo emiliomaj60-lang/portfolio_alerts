@@ -381,7 +381,7 @@ def riepilogo_operazioni():
         "totale_speso": 0.0
     })
 
-    with open("portfolio.csv", newline="", encoding="utf-8") as f:
+    with open("data/portfolio.csv", newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for r in reader:
             symbol = r["symbol"]
