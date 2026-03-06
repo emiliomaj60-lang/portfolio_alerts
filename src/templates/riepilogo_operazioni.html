@@ -44,7 +44,7 @@
         <tr>
             <td>{{ r.nome }}</td>
             <td>{{ r.symbol }}</td>
-            <td>{{ r.quantita_tot|round(0) }}</td>
+            <td>{{ r.quantita_tot|int }}</td>
             <td>{{ r.totale_speso|round(1) }} </td>
             <td>{{ r.spese_vendita_tot|round(1) }} </td>
             <td><b>{{ r.prezzo_pareggio|round(3) }} </b></td>
