@@ -384,11 +384,10 @@ def riepilogo_operazioni():
     comm_acq_perc = costi["commissioni_acquisto"] / 100
     comm_acq_min = costi["commis_min_acquisto"]
 
-    # ⚠️ Per la vendita usiamo SOLO:
-    # - commissioni_vendita (percentuale)
-    # - commis_min_vendita (minimo)
+    # 🔵 COSTI DI VENDITA
+    spese_vend_fisse = costi["spese_vendita"]          # spesa fissa vendita
     comm_vend_perc = costi["commissioni_vendita"] / 100
-    comm_vend_min = costi["commis_min_vendita"]
+    comm_vend_min = costi["commis_min_vendita"]        # minimo vendita
 
     path = "data/portfolio.csv"
 
@@ -428,7 +427,7 @@ def riepilogo_operazioni():
             dati[symbol]["totale_speso"] += totale_speso_lotto
 
     # ---------------------------------------------------------
-    # 🔵 CALCOLO SPESE DI VENDITA TOTALI (nuova regola)
+    # 🔵 CALCOLO SPESE DI VENDITA TOTALI (regola definitiva)
     # ---------------------------------------------------------
     riepilogo = []
     for symbol, info in dati.items():
@@ -440,7 +439,10 @@ def riepilogo_operazioni():
         spese_vendita_percentuale = totale_speso * comm_vend_perc
 
         # Minimo vendita
-        spese_vendita_tot = max(spese_vendita_percentuale, comm_vend_min)
+        spese_vendita_base = max(spese_vendita_percentuale, comm_vend_min)
+
+        # 🔵 AGGIUNGI anche la spesa fissa vendita
+        spese_vendita_tot = spese_vendita_base + spese_vend_fisse
 
         # Prezzo pareggio
         if quantita_tot != 0:
