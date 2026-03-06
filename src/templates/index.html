@@ -100,11 +100,11 @@
     </div>
 
     <!-- 🔵 BOTTONE AGGIORNA TUTTI (RapidAPI) -->
-    <div class="center">
+<!--    <div class="center">
         <button class="refresh-all-btn" onclick="aggiornaTutti()">🔄 Aggiorna Tutti</button>
     </div>
 
-    <!-- 🟣 BOTTONE AGGIORNA TUTTI (yfinance) -->
+       🟣 BOTTONE AGGIORNA TUTTI (yfinance) -->
     <div class="center">
         <button class="refresh-all-btn" onclick="aggiornaTuttiYF()">🔄 Aggiorna Tutti (yfinance)</button>
     </div>
@@ -186,17 +186,6 @@
             <span style="font-weight:bold;
                 color: {% if guadagno_totale >= 0 %}#2e7d32{% else %}#c62828{% endif %};">
                 {{ guadagno_totale|round(1) }} €
-            </span>
-        </p>
-
-
-        <p>
-            <b>Percentuale Totale:</b>
-            {% set percentuale_totale = ((totale_incassato_portafoglio - totale_speso_portafoglio) / totale_speso_portafoglio * 100) %}
-            
-            <span style="font-weight:bold;
-                color: {% if percentuale_totale >= 0 %}#2e7d32{% else %}#c62828{% endif %};">
-                {{ percentuale_totale|round(2) }}%
             </span>
         </p>
     </div>
