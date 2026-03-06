@@ -122,26 +122,26 @@ def refresh_price(symbol):
 # ---------------------------------------------------------
 #  AGGIORNA TUTTI I TITOLI (RapidAPI)
 # ---------------------------------------------------------
-@portfolio_bp.route("/aggiorna_tutti")
-def aggiorna_tutti():
-    portafoglio = carica_portafoglio_da_csv("data/portfolio.csv")
-    titoli = portafoglio.lista_titoli()
+#@portfolio_bp.route("/aggiorna_tutti")
+#def aggiorna_tutti():
+#    portafoglio = carica_portafoglio_da_csv("data/portfolio.csv")
+#    titoli = portafoglio.lista_titoli()
 
-    prezzi = {}
+#    prezzi = {}
 
-    for t in titoli:
-        api_symbol = t.symbol if "." in t.symbol else t.symbol + ".MI"
-        prezzo = get_price(api_symbol)
+#    for t in titoli:
+ #       api_symbol = t.symbol if "." in t.symbol else t.symbol + ".MI"
+#        prezzo = get_price(api_symbol)
 
-        print("DEBUG →", t.symbol, "=", prezzo)
+#        print("DEBUG →", t.symbol, "=", prezzo)
 
-        if prezzo is not None:
-            prezzi[t.symbol] = prezzo
+#        if prezzo is not None:
+#            prezzi[t.symbol] = prezzo
 
-    salva_prezzi_attuali(prezzi)
-    salva_ultimo_aggiornamento()
+#    salva_prezzi_attuali(prezzi)
+#    salva_ultimo_aggiornamento()
 
-    return jsonify({"status": "ok"})
+#    return jsonify({"status": "ok"})
 
 # ---------------------------------------------------------
 #  AGGIORNA TUTTI I TITOLI (yfinance)
