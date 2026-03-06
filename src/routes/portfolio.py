@@ -369,3 +369,43 @@ def gestione_delete():
     )
 
     return ("", 204)   # ⭐ nessun messaggio, nessuna pagina bianca
+
+@portfolio_bp.route("/riepilogo_operazioni")
+def riepilogo_operazioni():
+    import csv
+    from collections import defaultdict
+
+    dati = defaultdict(lambda: {
+        "nome": "",
+        "quantita_tot": 0,
+        "totale_speso": 0.0
+    })
+
+    with open("portfolio.csv", newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for r in reader:
+            symbol = r["symbol"]
+            nome = r["nome"]
+            q = float(r["quantita"])
+            prezzo = float(r["prezzo_carico"])
+
+            dati[symbol]["nome"] = nome
+            dati[symbol]["quantita_tot"] += q
+            dati[symbol]["totale_speso"] += q * prezzo
+
+    riepilogo = []
+    for symbol, info in dati.items():
+        if info["quantita_tot"] != 0:
+            prezzo_pareggio = info["totale_speso"] / info["quantita_tot"]
+        else:
+            prezzo_pareggio = 0
+
+        riepilogo.append({
+            "symbol": symbol,
+            "nome": info["nome"],
+            "quantita_tot": info["quantita_tot"],
+            "totale_speso": info["totale_speso"],
+            "prezzo_pareggio": prezzo_pareggio
+        })
+
+    return render_template("riepilogo_operazioni.html", riepilogo=riepilogo)
