@@ -31,24 +31,18 @@
             border-radius: 6px;
             cursor: pointer;
             font-size: 18px;
-
         }
-         .form-box {
+
+        .form-box {
             background: #eef3ff;
             padding: 40px;
             border-radius: 12px;
             margin-top: 50px;
-
-            /* nuova larghezza più stretta */
             width: 350px;
-
-            /* nuova altezza raddoppiata */
             min-height: 500px;
-
             margin-left: auto;
             margin-right: auto;
             box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
@@ -67,14 +61,99 @@
             font-size: 24px;
             margin-bottom: 25px;
             text-align: center;
-
         }
+
         /* Ingrandisce la colonna Azioni */
         table td:last-child {
             text-align: center;
             width: 180px;
         }
 
+        /* ⭐ CSS DEL MENU ⋮ — VERSIONE INGRANDITA */
+        .actions-cell {
+            position: relative;
+            text-align: right;
+            width: 120px; /* triplicato */
+        }
+
+        .menu-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .menu-button {
+            background: none;
+            border: none;
+            font-size: 36px;   /* era 18px → triplicato */
+            cursor: pointer;
+            padding: 6px 12px; /* più grande */
+            color: #444;
+        }
+
+        .menu-button:hover {
+            color: #000;
+        }
+
+        .menu-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 48px; /* era 22px → più spazio sotto i tre puntini */
+            background: white;
+            border: 2px solid #ccc; /* più spesso */
+            border-radius: 10px;    /* più morbido */
+            box-shadow: 0 4px 14px rgba(0,0,0,0.20);
+            min-width: 260px;       /* era 120px → più del doppio */
+            z-index: 10;
+            padding: 10px 0;
+        }
+
+        .menu-item {
+            padding: 24px 28px; /* aumenta l’altezza delle voci */
+            cursor: pointer;
+            font-size: 28px;    /* ingrandisce il testo */
+            font-weight: 600;
+        }
+
+        .menu-item:hover {
+            background: #f3f3f3;
+        }
+
+        .edit-nome {
+            width: 140px;
+            padding: 4px 6px;
+            text-align: left;
+        }
+
+        .edit-symbol {
+            width: 70px;
+            padding: 4px 6px;
+            text-align: center;
+        }
+
+        .edit-isin {
+            width: 130px;
+            padding: 4px 6px;
+            text-align: center;
+        }
+
+        .edit-quantita {
+            width: 60px;
+            padding: 4px 6px;
+            text-align: right;
+        }
+
+        .edit-prezzo {
+            width: 80px;
+            padding: 4px 6px;
+            text-align: right;
+        }
+
+        .edit-data {
+            width: 110px;
+            padding: 4px 6px;
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -86,10 +165,6 @@
         <h2>⚙️ Gestione Portafoglio</h2>
 
         <a href="/" class="btn-small">⬅ Torna al Portafoglio</a>
-        <a href="/riepilogo_operazioni" class="btn-small" style="background:#388e3c;">📘 Riepilogo</a>
-    </div>
-
-
     </div>
 
     <table>
@@ -105,19 +180,24 @@
 
         {% for t in titoli %}
         <tr>
-            <td>{{ t.nome }}</td>
-            <td>{{ t.symbol }}</td>
-            <td>{{ t.isin }}</td>
-            <td>{{ t.quantita|int }}</td>
-            <td>{{ t.prezzo_carico }}</td>
-            <td>{{ t.data_acquisto.strftime("%d/%m/%Y") }}</td>
-            <td>
-                <button class="btn-delete" onclick="deleteRow('{{ t.symbol }}')">🗑️</button>
+            <td style="width:130px;">{{ t.nome }}</td>
+            <td style="width:75px; text-align:center;">{{ t.symbol }}</td>
+            <td style="width:110px; text-align:center;">{{ t.isin }}</td>
+            <td style="width:60px; text-align:right;">{{ t.quantita|int }}</td>
+            <td style="width:80px; text-align:right;">{{ t.prezzo_carico }}</td>
+            <td style="width:100px; white-space:nowrap;">{{ t.data_acquisto.strftime("%d/%m/%Y") }}</td>
+            <td class="actions-cell">
+                <div class="menu-container">
+                    <button class="menu-button">⋮</button>
+                    <div class="menu-dropdown">
+                        <div class="menu-item" onclick="duplicateRow(this)">Copia</div>
+                        <div class="menu-item" onclick="deleteRow({{ loop.index0 }})">Elimina</div>
+                    </div>
+                </div>
             </td>
         </tr>
         {% endfor %}
     </table>
-
     <div class="form-box">
         <h3>➕ Aggiungi Nuovo Titolo</h3>
 
@@ -128,7 +208,6 @@
             <input name="quantita" placeholder="Quantità" type="number" step="1"><br>
             <input name="prezzo_carico" placeholder="Prezzo Carico" type="number" step="0.0001"><br>
             <input name="data_acquisto" type="date"><br><br>
-
             <button class="btn-small" type="submit">Aggiungi</button>
         </form>
     </div>
@@ -136,6 +215,7 @@
 </div>
 
 <script>
+/* --- Aggiungi nuovo titolo --- */
 document.getElementById("addForm").onsubmit = function(e) {
     e.preventDefault();
     fetch("/gestione_portafoglio/add", {
@@ -144,11 +224,12 @@ document.getElementById("addForm").onsubmit = function(e) {
     }).then(() => location.reload());
 };
 
-function deleteRow(symbol) {
+/* --- Elimina titolo --- */
+function deleteRow(index) {
     if (!confirm("Vuoi davvero eliminare questo titolo?")) return;
 
     let fd = new FormData();
-    fd.append("chiave", symbol);
+    fd.append("index", index);
 
     fetch("/gestione_portafoglio/delete", {
         method: "POST",
@@ -156,6 +237,99 @@ function deleteRow(symbol) {
     }).then(() => location.reload());
 }
 
+/* --- MENU ⋮ (Modifica / Copia / Elimina) --- */
+document.addEventListener("click", function(e) {
+    const isButton = e.target.classList.contains("menu-button");
+    const dropdowns = document.querySelectorAll(".menu-dropdown");
+
+    // Chiude tutti i menu
+    dropdowns.forEach(d => d.style.display = "none");
+
+    // Se clicco sul bottone ⋮ apro il suo menu
+    if (isButton) {
+        e.stopPropagation();  
+        const menu = e.target.nextElementSibling;
+        if (menu) {
+            menu.style.display = "block";
+        }
+    }
+});
+
+/* --- Copia --- */
+function copyRow(symbol) {
+    navigator.clipboard.writeText(symbol);
+    alert("Simbolo copiato: " + symbol);
+}
+/* --- DUPLICA RIGA --- */
+function duplicateRow(button) {
+    const row = button.closest("tr");
+    const clone = row.cloneNode(true);
+
+    // Rendi tutte le celle editabili (tranne i pulsanti)
+    const cells = clone.querySelectorAll("td");
+    cells.forEach((cell, index) => {
+        if (index < cells.length - 1) {
+            const value = cell.innerText.trim();
+
+            let cls = "";
+            if (index === 0) cls = "edit-nome";
+            if (index === 1) cls = "edit-symbol";
+            if (index === 2) cls = "edit-isin";
+            if (index === 3) cls = "edit-quantita";
+            if (index === 4) cls = "edit-prezzo";
+            if (index === 5) cls = "edit-data";
+
+            cell.innerHTML = `<input class="${cls}" value="${value}">`;
+        }
+    });
+
+    // Cambia il menu in un pulsante "Salva"
+    const actionCell = clone.querySelector("td:last-child");
+    actionCell.innerHTML = `
+        <button class="btn btn-success" onclick="saveNewRow(this)">Salva</button>
+    `;
+
+    // Inserisci la riga sotto quella originale
+    row.parentNode.insertBefore(clone, row.nextSibling);
+}
+
+/* --- SALVA LA RIGA DUPLICATA SU GITHUB --- */
+function saveNewRow(button) {
+    const row = button.closest("tr");
+    const inputs = row.querySelectorAll("input");
+
+    // Ordine reale della tua tabella:
+    // 0 = NOME
+    // 1 = SYMBOL
+    // 2 = ISIN
+    // 3 = QUANTITA
+    // 4 = PREZZO CARICO
+    // 5 = DATA ACQUISTO
+
+    const data = {
+        nome: inputs[0].value,
+        symbol: inputs[1].value,
+        isin: inputs[2].value,
+        quantita: inputs[3].value,
+        prezzo_carico: inputs[4].value,
+        data_acquisto: inputs[5].value
+    };
+
+    fetch("/gestione_portafoglio/duplicate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.status === "ok") {
+            alert("Titolo duplicato!");
+            location.reload();
+        } else {
+            alert("Errore: " + res.error);
+        }
+    });
+}
 </script>
 
 </body>
