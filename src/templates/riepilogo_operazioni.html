@@ -4,6 +4,22 @@
     <meta charset="UTF-8">
     <title>Riepilogo Operazioni</title>
     <link rel="stylesheet" href="/static/style.css">
+
+    <style>
+        .btn-big {
+            display: block;
+            margin: 40px auto;
+            padding: 18px 30px;
+            background: #1976d2;
+            color: white;
+            font-size: 24px;
+            border-radius: 12px;
+            text-decoration: none;
+            width: 360px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
 </head>
 
 <body>
@@ -12,7 +28,6 @@
 
     <div class="top-bar">
         <h2>📘 Riepilogo Operazioni</h2>
-        <a href="/gestione_portafoglio" class="btn-small">⬅ Torna alla Gestione</a>
     </div>
 
     <table>
@@ -21,6 +36,7 @@
             <th>Symbol</th>
             <th>Quantità Totale</th>
             <th>Totale Speso</th>
+            <th>Spese Vendita Totali</th>
             <th>Prezzo Pareggio</th>
         </tr>
 
@@ -30,10 +46,13 @@
             <td>{{ r.symbol }}</td>
             <td>{{ r.quantita_tot|round(2) }}</td>
             <td>{{ r.totale_speso|round(2) }} €</td>
+            <td>{{ r.spese_vendita_tot|round(2) }} €</td>
             <td><b>{{ r.prezzo_pareggio|round(3) }} €</b></td>
         </tr>
         {% endfor %}
     </table>
+
+    <a href="/gestione_portafoglio" class="btn-big">⬅ Torna alla Gestione Portafoglio</a>
 
 </div>
 
