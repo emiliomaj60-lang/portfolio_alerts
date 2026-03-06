@@ -375,6 +375,18 @@ def riepilogo_operazioni():
     import csv
     import os
     from collections import defaultdict
+    from data_access import carica_costi_gestione
+
+    # Carico i costi reali dal CSV
+    costi = carica_costi_gestione()
+
+    spese_acq_fisse = costi["spese_acquisto"]
+    comm_acq_perc = costi["commissioni_acquisto"] / 100
+    comm_acq_min = costi["commis_min_acquisto"]
+
+    spese_vend_fisse = costi["spese_vendita"]
+    comm_vend_perc = costi["commissioni_vendita"] / 100
+    comm_vend_min = costi["commis_min_vendita"]
 
     path = "data/portfolio.csv"
 
@@ -397,30 +409,54 @@ def riepilogo_operazioni():
             q = float(r["quantita"])
             prezzo = float(r["prezzo_carico"])
 
-            # 🔵 QUI INSERIREMO IL TUO CALCOLO REALE DELLE SPESE DI VENDITA
-            spese_vendita = 0.0
+            # -----------------------------
+            # 🔵 CALCOLO COSTI DI ACQUISTO
+            # -----------------------------
+            valore_acquisto = prezzo * q
 
+            commissioni_acq = valore_acquisto * comm_acq_perc
+            if commissioni_acq < comm_acq_min:
+                commissioni_acq = comm_acq_min
+
+            totale_speso_lotto = valore_acquisto + spese_acq_fisse + commissioni_acq
+
+            # -----------------------------
+            # 🔵 CALCOLO COSTI DI VENDITA
+            # (stimati usando prezzo di carico)
+            # -----------------------------
+            valore_vendita_stimato = prezzo * q
+
+            commissioni_vend = valore_vendita_stimato * comm_vend_perc
+            if commissioni_vend < comm_vend_min:
+                commissioni_vend = comm_vend_min
+
+            spese_vendita_lotto = spese_vend_fisse + commissioni_vend
+
+            # -----------------------------
+            # 🔵 ACCUMULO PER SYMBOL
+            # -----------------------------
             dati[symbol]["nome"] = nome
             dati[symbol]["quantita_tot"] += q
-            dati[symbol]["totale_speso"] += q * prezzo
-            dati[symbol]["spese_vendita_tot"] += spese_vendita
+            dati[symbol]["totale_speso"] += totale_speso_lotto
+            dati[symbol]["spese_vendita_tot"] += spese_vendita_lotto
 
     riepilogo = []
     for symbol, info in dati.items():
 
-        totale_spese = info["totale_speso"]
+        totale_speso = info["totale_speso"]
         spese_vendita_tot = info["spese_vendita_tot"]
+        quantita_tot = info["quantita_tot"]
 
-        if info["quantita_tot"] != 0:
-            prezzo_pareggio = (totale_spese + spese_vendita_tot) / info["quantita_tot"]
+        if quantita_tot != 0:
+            prezzo_pareggio = (totale_speso + spese_vendita_tot) / quantita_tot
         else:
             prezzo_pareggio = 0
 
         riepilogo.append({
             "symbol": symbol,
             "nome": info["nome"],
-            "quantita_tot": info["quantita_tot"],
-            "totale_speso": totale_spese,
+            "quantita_tot": quantita_tot,
+            "totale_speso": totale_speso,
             "spese_vendita_tot": spese_vendita_tot,
             "prezzo_pareggio": prezzo_pareggio
         })
