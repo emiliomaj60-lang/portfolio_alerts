@@ -373,30 +373,46 @@ def gestione_delete():
 @portfolio_bp.route("/riepilogo_operazioni")
 def riepilogo_operazioni():
     import csv
+    import os
     from collections import defaultdict
+
+    path = "data/portfolio.csv"
+
+    if not os.path.exists(path):
+        return "ERRORE: Il file data/portfolio.csv non esiste", 500
 
     dati = defaultdict(lambda: {
         "nome": "",
         "quantita_tot": 0,
-        "totale_speso": 0.0
+        "totale_speso": 0.0,
+        "spese_vendita_tot": 0.0
     })
 
-    with open("data/portfolio.csv", newline="", encoding="utf-8") as f:
+    with open(path, newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
+
         for r in reader:
             symbol = r["symbol"]
             nome = r["nome"]
             q = float(r["quantita"])
             prezzo = float(r["prezzo_carico"])
 
+            # 🔵 QUI INSERIREMO IL TUO CALCOLO REALE DELLE SPESE DI VENDITA
+            spese_vendita = 0.0
+
             dati[symbol]["nome"] = nome
             dati[symbol]["quantita_tot"] += q
             dati[symbol]["totale_speso"] += q * prezzo
+            dati[symbol]["spese_vendita_tot"] += spese_vendita
 
     riepilogo = []
     for symbol, info in dati.items():
+
+        totale_spese = info["totale_speso"]
+        spese_vendita_tot = info["spese_vendita_tot"]
+
         if info["quantita_tot"] != 0:
-            prezzo_pareggio = info["totale_speso"] / info["quantita_tot"]
+            prezzo_pareggio = (totale_spese + spese_vendita_tot) / info["quantita_tot"]
         else:
             prezzo_pareggio = 0
 
@@ -404,7 +420,8 @@ def riepilogo_operazioni():
             "symbol": symbol,
             "nome": info["nome"],
             "quantita_tot": info["quantita_tot"],
-            "totale_speso": info["totale_speso"],
+            "totale_speso": totale_spese,
+            "spese_vendita_tot": spese_vendita_tot,
             "prezzo_pareggio": prezzo_pareggio
         })
 
