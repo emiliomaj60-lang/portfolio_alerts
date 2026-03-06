@@ -193,3 +193,15 @@ body::after {
     pointer-events: none;
     z-index: -1;       /* DIETRO AL CONTENUTO, DAVANTI ALLO SFONDO */
 }
+/* ----------------------------------------------------
+   BOTTONE RIEPILOGO
+---------------------------------------------------- */
+.btn-riepilogo {
+    padding: 14px 22px;
+    background: #388e3c;
+    color: white;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: bold;
+}
