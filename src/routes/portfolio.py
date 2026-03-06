@@ -10,6 +10,13 @@ from datetime import datetime
 import csv
 import os
 
+from github import Github
+import base64
+
+GITHUB_REPO = "emiliomaj60-lang/portfolio_alerts"
+CSV_PATH = "data/portfolio.csv"
+
+
 portfolio_bp = Blueprint("portfolio", __name__)
 
 # ---------------------------------------------------------
@@ -26,12 +33,21 @@ def leggi_ultimo_aggiornamento():
     except:
         return "Mai aggiornato"
 
-# ---------------------------------------------------------
-#  HOMEPAGE PORTAFOGLIO
-# ---------------------------------------------------------
 @portfolio_bp.route("/")
 def index():
-    portafoglio = carica_portafoglio_da_csv("data/portfolio.csv")
+    # 🔥 Legge il CSV direttamente da GitHub
+    g = Github(os.environ["GITHUB_TOKEN"])
+    repo = g.get_repo(GITHUB_REPO)
+    file = repo.get_contents(CSV_PATH)
+
+    csv_text = base64.b64decode(file.content).decode("utf-8")
+
+    # Scrive temporaneamente il CSV in /tmp
+    with open("/tmp/portfolio_temp.csv", "w", encoding="utf-8") as temp:
+        temp.write(csv_text)
+
+    # Usa la tua funzione esistente per creare gli oggetti Titolo
+    portafoglio = carica_portafoglio_da_csv("/tmp/portfolio_temp.csv")
     titoli = portafoglio.lista_titoli()
 
     prezzi_salvati = carica_prezzi_attuali()
@@ -41,11 +57,8 @@ def index():
     totale_incassato_portafoglio = 0
 
     for t in titoli:
-
-        # --- PREZZO ATTUALE ---
         t.prezzo_attuale = prezzi_salvati.get(t.symbol, None)
 
-        # --- GAIN/LOSS ---
         if t.prezzo_attuale:
             try:
                 t.gain_loss = ((t.prezzo_attuale - t.prezzo_carico) / t.prezzo_carico) * 100
@@ -54,7 +67,6 @@ def index():
         else:
             t.gain_loss = None
 
-        # --- CALCOLI ACQUISTO ---
         valore_acq = t.prezzo_carico * t.quantita
 
         comm_acq = valore_acq * (costi["commissioni_acquisto"] / 100)
@@ -64,12 +76,10 @@ def index():
         totale_speso = valore_acq + costi["spese_acquisto"] + comm_acq
         totale_speso_portafoglio += totale_speso
 
-        # --- SE NON HO PREZZO ATTUALE ---
         if not t.prezzo_attuale:
             t.guadagno_netto = None
             continue
 
-        # --- CALCOLI VENDITA ---
         valore_vend = t.prezzo_attuale * t.quantita
 
         comm_vend = valore_vend * (costi["commissioni_vendita"] / 100)
@@ -157,12 +167,21 @@ def aggiorna_tutti_yf():
 
     return jsonify({"status": "ok"})
 
-# ---------------------------------------------------------
-#  PAGINA SCHEDA RIASSUNTIVA
-# ---------------------------------------------------------
 @portfolio_bp.route("/scheda/<chiave>")
 def scheda(chiave):
-    portafoglio = carica_portafoglio_da_csv("data/portfolio.csv")
+    # 🔥 Legge il CSV direttamente da GitHub
+    g = Github(os.environ["GITHUB_TOKEN"])
+    repo = g.get_repo(GITHUB_REPO)
+    file = repo.get_contents(CSV_PATH)
+
+    csv_text = base64.b64decode(file.content).decode("utf-8")
+
+    # Scrive temporaneamente il CSV in /tmp
+    with open("/tmp/portfolio_temp.csv", "w", encoding="utf-8") as temp:
+        temp.write(csv_text)
+
+    # Usa la tua funzione esistente per creare gli oggetti Titolo
+    portafoglio = carica_portafoglio_da_csv("/tmp/portfolio_temp.csv")
 
     titolo = portafoglio.get_titolo(chiave)
     if not titolo:
@@ -229,17 +248,29 @@ def scheda(chiave):
         totale_incassato=totale_incassato,
         guadagno_netto=guadagno_netto
     )
-
 # ---------------------------------------------------------
-#  GESTIONE PORTAFOGLIO (CRUD su CSV)
+#  GESTIONE PORTAFOGLIO (CRUD su CSV GitHub)
 # ---------------------------------------------------------
 @portfolio_bp.route("/gestione_portafoglio")
 def gestione_portafoglio():
-    portafoglio = carica_portafoglio_da_csv("data/portfolio.csv")
+    # 🔥 Legge il CSV direttamente da GitHub
+    g = Github(os.environ["GITHUB_TOKEN"])
+    repo = g.get_repo(GITHUB_REPO)
+    file = repo.get_contents(CSV_PATH)
+
+    csv_text = base64.b64decode(file.content).decode("utf-8")
+
+    # Usa la tua funzione esistente per convertire il CSV in oggetti
+    with open("/tmp/portfolio_temp.csv", "w", encoding="utf-8") as temp:
+        temp.write(csv_text)
+
+    portafoglio = carica_portafoglio_da_csv("/tmp/portfolio_temp.csv")
     titoli = portafoglio.lista_titoli()
+
     return render_template("gestione_portafoglio.html", titoli=titoli)
 
-# --- AGGIUNGI TITOLO ---
+
+# --- AGGIUNGI TITOLO (scrive su GitHub) ---
 @portfolio_bp.route("/gestione_portafoglio/add", methods=["POST"])
 def gestione_add():
     data_form = request.form["data_acquisto"]
@@ -254,83 +285,87 @@ def gestione_add():
         data_it
     ]
 
-    with open("data/portfolio.csv", "a", newline="", encoding="utf-8-sig") as f:
-        # 🔥 aggiunge newline se manca
-        f.seek(0, os.SEEK_END)
-        if f.tell() > 0:
-            f.write("\n")
+    g = Github(os.environ["GITHUB_TOKEN"])
+    repo = g.get_repo(GITHUB_REPO)
 
-        writer = csv.writer(f)
-        writer.writerow(nuovo)
+    # 1️⃣ Leggi CSV da GitHub
+    file = repo.get_contents(CSV_PATH)
+    csv_text = base64.b64decode(file.content).decode("utf-8")
+
+    # 2️⃣ Aggiungi la nuova riga
+    csv_text += "\n" + ",".join(nuovo)
+
+    # 3️⃣ Riscrivi il CSV su GitHub
+    repo.update_file(
+        path=CSV_PATH,
+        message="Aggiunto nuovo titolo",
+        content=csv_text,
+        sha=file.sha
+    )
 
     return jsonify({"status": "ok"})
 
-# --- ELIMINA TITOLO ---
+# --- DUPLICA / AGGIUNGI TITOLO DA COPIA (scrive su GitHub) ---
+@portfolio_bp.route("/gestione_portafoglio/duplicate", methods=["POST"])
+def gestione_duplicate():
+    data = request.get_json()
+
+    nuovo = [
+        data["isin"],
+        data["symbol"],
+        data["nome"],
+        data["quantita"],
+        data["prezzo_carico"],
+        data["data_acquisto"]
+    ]
+
+    g = Github(os.environ["GITHUB_TOKEN"])
+    repo = g.get_repo(GITHUB_REPO)
+
+    # 1️⃣ Leggi CSV da GitHub
+    file = repo.get_contents(CSV_PATH)
+    csv_text = base64.b64decode(file.content).decode("utf-8")
+
+    # 2️⃣ Aggiungi la nuova riga
+    csv_text += "\n" + ",".join(nuovo)
+
+    # 3️⃣ Riscrivi il CSV su GitHub
+    repo.update_file(
+        path=CSV_PATH,
+        message="Duplicato titolo",
+        content=csv_text,
+        sha=file.sha
+    )
+
+    return jsonify({"status": "ok"})
+
+# --- ELIMINA TITOLO (scrive su GitHub) ---
 @portfolio_bp.route("/gestione_portafoglio/delete", methods=["POST"])
 def gestione_delete():
-    chiave = request.form["chiave"]  # symbol
+    index = int(request.form["index"])
 
-    righe = []
-    with open("data/portfolio.csv", "r", encoding="utf-8") as f:
-        reader = csv.reader(f)
-        header = next(reader)
-        for r in reader:
-            if r[1] != chiave:  # symbol è la seconda colonna
-                righe.append(r)
+    g = Github(os.environ["GITHUB_TOKEN"])
+    repo = g.get_repo(GITHUB_REPO)
 
-    with open("data/portfolio.csv", "w", newline="", encoding="utf-8") as f:
-        writer = csv.writer(f)
-        writer.writerow(header)
-        writer.writerows(righe)
+    file = repo.get_contents(CSV_PATH)
+    csv_text = base64.b64decode(file.content).decode("utf-8")
 
-    return jsonify({"status": "ok"})
+    righe = csv_text.splitlines()
+    header = righe[0]
+    corpo = righe[1:]
 
-@portfolio_bp.route("/debug_csv")
-def debug_csv():
-    out = []
-    with open("data/portfolio.csv", "r", encoding="utf-8") as f:
-        for i, line in enumerate(f, start=1):
-            out.append(f"{i}: {line}")
-    return "<br>".join(out)
+    nuove_righe = [header]
+    for i, r in enumerate(corpo):
+        if i != index:
+            nuove_righe.append(r)
 
-@portfolio_bp.route("/riepilogo_operazioni")
-def riepilogo_operazioni():
-    import csv
-    from collections import defaultdict
+    nuovo_csv = "\n".join(nuove_righe)
 
-    path = "portfolio.csv"   # se è in /data, cambia in "data/portfolio.csv"
+    repo.update_file(
+        path=CSV_PATH,
+        message=f"Eliminata riga {index}",
+        content=nuovo_csv,
+        sha=file.sha
+    )
 
-    dati = defaultdict(lambda: {
-        "nome": "",
-        "quantita_tot": 0,
-        "totale_speso": 0.0
-    })
-
-    with open(path, newline="", encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        for r in reader:
-            symbol = r["symbol"]
-            nome = r["nome"]
-            q = float(r["quantita"])
-            prezzo = float(r["prezzo_carico"])
-
-            dati[symbol]["nome"] = nome
-            dati[symbol]["quantita_tot"] += q
-            dati[symbol]["totale_speso"] += q * prezzo
-
-    riepilogo = []
-    for symbol, info in dati.items():
-        if info["quantita_tot"] != 0:
-            prezzo_pareggio = info["totale_speso"] / info["quantita_tot"]
-        else:
-            prezzo_pareggio = 0
-
-        riepilogo.append({
-            "symbol": symbol,
-            "nome": info["nome"],
-            "quantita_tot": info["quantita_tot"],
-            "totale_speso": info["totale_speso"],
-            "prezzo_pareggio": prezzo_pareggio
-        })
-
-    return render_template("riepilogo_operazioni.html", riepilogo=riepilogo)
+    return ("", 204)   # ⭐ nessun messaggio, nessuna pagina bianca
