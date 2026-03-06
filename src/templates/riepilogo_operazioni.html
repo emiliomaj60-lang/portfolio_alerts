@@ -46,7 +46,7 @@
             <td>{{ r.quantita_tot|int }}</td>
             <td>{{ r.totale_speso|round(1) }} </td>
             <td>{{ r.spese_vendita_tot|round(1) }} </td>
-            <td><b style="font-size:32px;">{{ r.prezzo_pareggio|round(3) }}</b></td>
+            <td><span class="pareggio-box">{{ r.prezzo_pareggio|round(3) }}</span></td>
         </tr>
         {% endfor %}
     </table>
