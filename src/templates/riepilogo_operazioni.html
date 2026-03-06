@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Riepilogo Operazioni</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="top-bar">
+        <h2>📘 Riepilogo Operazioni</h2>
+        <a href="/gestione_portafoglio" class="btn-small">⬅ Torna alla Gestione</a>
+    </div>
+
+    <table>
+        <tr>
+            <th>Nome</th>
+            <th>Symbol</th>
+            <th>Quantità Totale</th>
+            <th>Totale Speso</th>
+            <th>Prezzo Pareggio</th>
+        </tr>
+
+        {% for r in riepilogo %}
+        <tr>
+            <td>{{ r.nome }}</td>
+            <td>{{ r.symbol }}</td>
+            <td>{{ r.quantita_tot|round(2) }}</td>
+            <td>{{ r.totale_speso|round(2) }} €</td>
+            <td><b>{{ r.prezzo_pareggio|round(3) }} €</b></td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</div>
+
+</body>
+</html>
