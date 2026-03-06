@@ -384,7 +384,9 @@ def riepilogo_operazioni():
     comm_acq_perc = costi["commissioni_acquisto"] / 100
     comm_acq_min = costi["commis_min_acquisto"]
 
-    spese_vend_fisse = costi["spese_vendita"]
+    # ⚠️ Per la vendita usiamo SOLO:
+    # - commissioni_vendita (percentuale)
+    # - commis_min_vendita (minimo)
     comm_vend_perc = costi["commissioni_vendita"] / 100
     comm_vend_min = costi["commis_min_vendita"]
 
@@ -396,10 +398,12 @@ def riepilogo_operazioni():
     dati = defaultdict(lambda: {
         "nome": "",
         "quantita_tot": 0,
-        "totale_speso": 0.0,
-        "spese_vendita_tot": 0.0
+        "totale_speso": 0.0
     })
 
+    # ---------------------------------------------------------
+    # 🔵 CALCOLO TOTALE SPESO (acquisto + spese acquisto)
+    # ---------------------------------------------------------
     with open(path, newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
 
@@ -409,44 +413,36 @@ def riepilogo_operazioni():
             q = float(r["quantita"])
             prezzo = float(r["prezzo_carico"])
 
-            # -----------------------------
-            # 🔵 CALCOLO COSTI DI ACQUISTO
-            # -----------------------------
             valore_acquisto = prezzo * q
 
+            # Commissioni acquisto
             commissioni_acq = valore_acquisto * comm_acq_perc
             if commissioni_acq < comm_acq_min:
                 commissioni_acq = comm_acq_min
 
             totale_speso_lotto = valore_acquisto + spese_acq_fisse + commissioni_acq
 
-            # -----------------------------
-            # 🔵 CALCOLO COSTI DI VENDITA
-            # (stimati usando prezzo di carico)
-            # -----------------------------
-            valore_vendita_stimato = prezzo * q
-
-            commissioni_vend = valore_vendita_stimato * comm_vend_perc
-            if commissioni_vend < comm_vend_min:
-                commissioni_vend = comm_vend_min
-
-            spese_vendita_lotto = spese_vend_fisse + commissioni_vend
-
-            # -----------------------------
-            # 🔵 ACCUMULO PER SYMBOL
-            # -----------------------------
+            # Accumulo
             dati[symbol]["nome"] = nome
             dati[symbol]["quantita_tot"] += q
             dati[symbol]["totale_speso"] += totale_speso_lotto
-            dati[symbol]["spese_vendita_tot"] += spese_vendita_lotto
 
+    # ---------------------------------------------------------
+    # 🔵 CALCOLO SPESE DI VENDITA TOTALI (nuova regola)
+    # ---------------------------------------------------------
     riepilogo = []
     for symbol, info in dati.items():
 
         totale_speso = info["totale_speso"]
-        spese_vendita_tot = info["spese_vendita_tot"]
         quantita_tot = info["quantita_tot"]
 
+        # Percentuale sulle spese totali
+        spese_vendita_percentuale = totale_speso * comm_vend_perc
+
+        # Minimo vendita
+        spese_vendita_tot = max(spese_vendita_percentuale, comm_vend_min)
+
+        # Prezzo pareggio
         if quantita_tot != 0:
             prezzo_pareggio = (totale_speso + spese_vendita_tot) / quantita_tot
         else:
