@@ -230,11 +230,14 @@ body::after {
     margin-bottom: 25px;
 }
 
-.pareggio-box {
-    font-size: 32px;
-    font-weight: 800;
-    padding: 8px 14px;
-    border-left: 6px solid #0d47a1;
-    background: #f5faff;
-    border-radius: 6px;
+.pareggio-badge {
+    font-size: 34px;
+    font-weight: 900;
+    color: #0d47a1;
+    background: #e3f2fd;
+    padding: 12px 20px;
+    border-radius: 12px;
+    display: inline-block;   /* 🔥 fondamentale per far vedere il box */
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    letter-spacing: 1px;
 }
