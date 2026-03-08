@@ -43,24 +43,55 @@
             <th>Totale Speso</th>
             <th>Spese Vendita</th>
             <th>Prezzo Pareggio</th>
-            <th>Prezzo Attuale</th> <!-- 🔵 NUOVA -->
+            <th>Prezzo Attuale</th>
+            <th>Gain/Loss %</th>
         </tr>
 
         {% for r in riepilogo %}
         <tr>
             <td>{{ r.nome }}</td>
             <td>{{ r.quantita_tot|int }}</td>
-            <td>{{ r.totale_speso|round(1) }}</td>
-            <td>{{ r.spese_vendita_tot|round(1) }}</td>
-            <td><span class="pareggio-badge">{{ r.prezzo_pareggio|round(3) }}</span></td>
+            <td>{{ r.totale_speso|round(2) }}</td>
+            <td>{{ r.spese_vendita_tot|round(2) }}</td>
 
+            <!-- Badge Pareggio -->
+            <td>
+                <span class="pareggio-badge">
+                    {{ r.prezzo_pareggio|round(3) }}
+                </span>
+            </td>
+
+            <!-- Prezzo Attuale con colore dinamico -->
             <td>
                 {% if r.prezzo_attuale %}
-                    <span class="prezzo-attuale">{{ r.prezzo_attuale|round(3) }}</span>
+                    {% if r.prezzo_attuale >= r.prezzo_pareggio %}
+                        <span class="prezzo-attuale prezzo-up">
+                            {{ r.prezzo_attuale|round(3) }}
+                        </span>
+                    {% else %}
+                        <span class="prezzo-attuale prezzo-down">
+                            {{ r.prezzo_attuale|round(3) }}
+                        </span>
+                    {% endif %}
                 {% else %}
                     <span style="color:#999;">n/d</span>
                 {% endif %}
             </td>
+
+            <!-- Gain/Loss % -->
+            <td>
+                {% if r.prezzo_attuale %}
+                    {% set diff = ((r.prezzo_attuale - r.prezzo_pareggio) / r.prezzo_pareggio) * 100 %}
+                    {% if diff >= 0 %}
+                        <span class="gain-positive">+{{ diff|round(2) }}%</span>
+                    {% else %}
+                        <span class="gain-negative">{{ diff|round(2) }}%</span>
+                    {% endif %}
+                {% else %}
+                    <span style="color:#999;">n/d</span>
+                {% endif %}
+            </td>
+
         </tr>
         {% endfor %}
     </table>
