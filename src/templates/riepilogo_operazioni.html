@@ -64,28 +64,18 @@
             <!-- Prezzo Attuale con colore dinamico -->
             <td>
                 {% if r.prezzo_attuale %}
+                    {% set diff = ((r.prezzo_attuale - r.prezzo_pareggio) / r.prezzo_pareggio) * 100 %}
+
                     {% if r.prezzo_attuale >= r.prezzo_pareggio %}
                         <span class="prezzo-attuale prezzo-up">
                             {{ r.prezzo_attuale|round(3) }}
+                            <span class="gain-inline">(+{{ diff|round(2) }}%)</span>
                         </span>
                     {% else %}
                         <span class="prezzo-attuale prezzo-down">
                             {{ r.prezzo_attuale|round(3) }}
+                            <span class="loss-inline">({{ diff|round(2) }}%)</span>
                         </span>
-                    {% endif %}
-                {% else %}
-                    <span style="color:#999;">n/d</span>
-                {% endif %}
-            </td>
-
-            <!-- Gain/Loss % -->
-            <td>
-                {% if r.prezzo_attuale %}
-                    {% set diff = ((r.prezzo_attuale - r.prezzo_pareggio) / r.prezzo_pareggio) * 100 %}
-                    {% if diff >= 0 %}
-                        <span class="gain-positive">+{{ diff|round(2) }}%</span>
-                    {% else %}
-                        <span class="gain-negative">{{ diff|round(2) }}%</span>
                     {% endif %}
                 {% else %}
                     <span style="color:#999;">n/d</span>
