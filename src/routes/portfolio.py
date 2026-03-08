@@ -119,33 +119,6 @@ def refresh_price(symbol):
         "prezzo": prezzo
     })
 
-# ---------------------------------------------------------
-#  AGGIORNA TUTTI I TITOLI (RapidAPI)
-# ---------------------------------------------------------
-#@portfolio_bp.route("/aggiorna_tutti")
-#def aggiorna_tutti():
-#    portafoglio = carica_portafoglio_da_csv("data/portfolio.csv")
-#    titoli = portafoglio.lista_titoli()
-
-#    prezzi = {}
-
-#    for t in titoli:
- #       api_symbol = t.symbol if "." in t.symbol else t.symbol + ".MI"
-#        prezzo = get_price(api_symbol)
-
-#        print("DEBUG →", t.symbol, "=", prezzo)
-
-#        if prezzo is not None:
-#            prezzi[t.symbol] = prezzo
-
-#    salva_prezzi_attuali(prezzi)
-#    salva_ultimo_aggiornamento()
-
-#    return jsonify({"status": "ok"})
-
-# ---------------------------------------------------------
-#  AGGIORNA TUTTI I TITOLI (yfinance)
-# ---------------------------------------------------------
 @portfolio_bp.route("/aggiorna_tutti_yf")
 def aggiorna_tutti_yf():
     portafoglio = carica_portafoglio_da_csv("data/portfolio.csv")
@@ -376,9 +349,11 @@ def riepilogo_operazioni():
     import os
     from collections import defaultdict
     from data_access import carica_costi_gestione
+    from data_access import carica_prezzi_attuali
 
     # Carico i costi reali dal CSV
     costi = carica_costi_gestione()
+    prezzi_attuali = carica_prezzi_attuali()
 
     spese_acq_fisse = costi["spese_acquisto"]
     comm_acq_perc = costi["commissioni_acquisto"] / 100
@@ -397,8 +372,13 @@ def riepilogo_operazioni():
     dati = defaultdict(lambda: {
         "nome": "",
         "quantita_tot": 0,
-        "totale_speso": 0.0
+        "totale_speso": 0.0,
+        "spese_vendita_tot": 0.0,
+        "prezzo_pareggio": 0.0,
+        "prezzo_attuale": None   # 🔵 NUOVO CAMPO
     })
+
+
 
     # ---------------------------------------------------------
     # 🔵 CALCOLO TOTALE SPESO (acquisto + spese acquisto)
@@ -450,13 +430,22 @@ def riepilogo_operazioni():
         else:
             prezzo_pareggio = 0
 
-        riepilogo.append({
-            "symbol": symbol,
-            "nome": info["nome"],
-            "quantita_tot": quantita_tot,
-            "totale_speso": totale_speso,
-            "spese_vendita_tot": spese_vendita_tot,
-            "prezzo_pareggio": prezzo_pareggio
-        })
+            riepilogo.append({
+                "symbol": symbol,
+                "nome": info["nome"],
+                "quantita_tot": quantita_tot,
+                "totale_speso": totale_speso,
+                "spese_vendita_tot": spese_vendita_tot,
+                "prezzo_pareggio": prezzo_pareggio
+            })
+
+    # 🔵 AGGIUNGI PREZZO ATTUALE A OGNI TITOLO
+    for item in riepilogo:
+        symbol = item["symbol"]
+        if symbol in prezzi_attuali:
+            item["prezzo_attuale"] = prezzi_attuali[symbol]
+        else:
+            item["prezzo_attuale"] = None
 
     return render_template("riepilogo_operazioni.html", riepilogo=riepilogo)
+
