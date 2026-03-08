@@ -406,46 +406,36 @@ def riepilogo_operazioni():
             dati[symbol]["quantita_tot"] += q
             dati[symbol]["totale_speso"] += totale_speso_lotto
 
-    # ---------------------------------------------------------
-    # 🔵 CALCOLO SPESE DI VENDITA TOTALI (regola definitiva)
-    # ---------------------------------------------------------
-    riepilogo = []
-    for symbol, info in dati.items():
+# ---------------------------------------------------------
+# 🔵 CALCOLO SPESE DI VENDITA TOTALI (regola definitiva)
+# ---------------------------------------------------------
+riepilogo = []
+for symbol, info in dati.items():
 
-        totale_speso = info["totale_speso"]
-        quantita_tot = info["quantita_tot"]
+    totale_speso = info["totale_speso"]
+    quantita_tot = info["quantita_tot"]
 
-        # Percentuale sulle spese totali
-        spese_vendita_percentuale = totale_speso * comm_vend_perc
+    # Percentuale sulle spese totali
+    spese_vendita_percentuale = totale_speso * comm_vend_perc
 
-        # Minimo vendita
-        spese_vendita_base = max(spese_vendita_percentuale, comm_vend_min)
+    # Minimo vendita
+    spese_vendita_base = max(spese_vendita_percentuale, comm_vend_min)
 
-        # 🔵 AGGIUNGI anche la spesa fissa vendita
-        spese_vendita_tot = spese_vendita_base + spese_vend_fisse
+    # 🔵 AGGIUNGI anche la spesa fissa vendita
+    spese_vendita_tot = spese_vendita_base + spese_vend_fisse
 
-        # Prezzo pareggio
-        if quantita_tot != 0:
-            prezzo_pareggio = (totale_speso + spese_vendita_tot) / quantita_tot
-        else:
-            prezzo_pareggio = 0
+    # Prezzo pareggio
+    if quantita_tot != 0:
+        prezzo_pareggio = (totale_speso + spese_vendita_tot) / quantita_tot
+    else:
+        prezzo_pareggio = 0
 
-            riepilogo.append({
-                "symbol": symbol,
-                "nome": info["nome"],
-                "quantita_tot": quantita_tot,
-                "totale_speso": totale_speso,
-                "spese_vendita_tot": spese_vendita_tot,
-                "prezzo_pareggio": prezzo_pareggio
-            })
-
-    # 🔵 AGGIUNGI PREZZO ATTUALE A OGNI TITOLO
-    for item in riepilogo:
-        symbol = item["symbol"]
-        if symbol in prezzi_attuali:
-            item["prezzo_attuale"] = prezzi_attuali[symbol]
-        else:
-            item["prezzo_attuale"] = None
-
-    return render_template("riepilogo_operazioni.html", riepilogo=riepilogo)
-
+    # 👉 CORRETTO: append fuori dall'else
+    riepilogo.append({
+        "symbol": symbol,
+        "nome": info["nome"],
+        "quantita_tot": quantita_tot,
+        "totale_speso": totale_speso,
+        "spese_vendita_tot": spese_vendita_tot,
+        "prezzo_pareggio": prezzo_pareggio
+    })
