@@ -393,10 +393,17 @@ tr:hover {
 .riepilogo-container table {
     margin-left: 0;      /* 🔥 allinea a sinistra */
 }
-
-/* Se vuoi ancora più a sinistra, usa questo: */
-/*
-.riepilogo-container table {
-    margin-left: -20px;
+/* Gain/Loss dentro prezzo attuale */
+.gain-inline {
+    color: #2e7d32;
+    font-weight: 700;
+    margin-left: 6px;
+    font-size: 16px;
 }
-*/
+
+.loss-inline {
+    color: #c62828;
+    font-weight: 700;
+    margin-left: 6px;
+    font-size: 16px;
+}
