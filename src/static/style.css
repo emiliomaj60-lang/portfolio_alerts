@@ -391,7 +391,7 @@ tr:hover {
    RIEPILOGO OPERAZIONI — tabella spostata a sinistra
 ---------------------------------------------------- */
 .riepilogo-container table {
-    margin-left: 0;      /* 🔥 allinea a sinistra */
+    margin-left: -20px;      /* 🔥 allinea a sinistra */
 }
 
 /* Se vuoi ancora più a sinistra, usa questo: */
