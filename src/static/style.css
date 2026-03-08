@@ -19,7 +19,7 @@ header {
 
 .container {
     width: 90%;
-    max-width: 1200px;
+    max-width: 900px;
     margin: 30px auto;
     background: rgba(255, 255, 255, 0.92); /* TRASPARENZA LEGGERA */
     padding: 20px;
@@ -380,3 +380,23 @@ tr:hover {
     color: #c62828;
     font-weight: 900;
 }
+/* ----------------------------------------------------
+   RIEPILOGO OPERAZIONI — container più largo
+---------------------------------------------------- */
+.riepilogo-container {
+    max-width: 1400px;   /* 🔥 più largo SOLO qui */
+}
+
+/* ----------------------------------------------------
+   RIEPILOGO OPERAZIONI — tabella spostata a sinistra
+---------------------------------------------------- */
+.riepilogo-container table {
+    margin-left: 0;      /* 🔥 allinea a sinistra */
+}
+
+/* Se vuoi ancora più a sinistra, usa questo: */
+/*
+.riepilogo-container table {
+    margin-left: -20px;
+}
+*/
