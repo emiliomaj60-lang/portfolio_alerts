@@ -290,3 +290,93 @@ body::after {
     border-radius: 8px;
     background: #e3f2fd;
 }
+/* ----------------------------------------------------
+   TABELLA RIEPILOGO (stile premium)
+---------------------------------------------------- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 25px;
+    background: white;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.12);
+}
+
+th {
+    background: #0d47a1;
+    color: white;
+    padding: 16px;
+    font-size: 20px;
+    text-align: center;
+    letter-spacing: 0.5px;
+}
+
+td {
+    padding: 16px;
+    font-size: 20px;
+    text-align: center;
+}
+
+tr:nth-child(even) {
+    background: #f4f7fb;
+}
+
+tr:hover {
+    background: #e3f2fd;
+    transition: 0.2s ease-in-out;
+}
+
+/* ----------------------------------------------------
+   BADGE PREZZO PAREGGIO
+---------------------------------------------------- */
+.pareggio-badge {
+    font-size: 30px;
+    font-weight: 900;
+    color: #0d47a1;
+    background: #e3f2fd;
+    padding: 10px 18px;
+    border-radius: 12px;
+    display: inline-block;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    letter-spacing: 1px;
+}
+
+/* ----------------------------------------------------
+   BADGE PREZZO ATTUALE (base)
+---------------------------------------------------- */
+.prezzo-attuale {
+    font-size: 30px;
+    font-weight: 900;
+    padding: 10px 18px;
+    border-radius: 12px;
+    display: inline-block;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    letter-spacing: 1px;
+}
+
+/* ----------------------------------------------------
+   COLORI DINAMICI PREZZO ATTUALE
+---------------------------------------------------- */
+.prezzo-up {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.prezzo-down {
+    background: #ffebee;
+    color: #c62828;
+}
+
+/* ----------------------------------------------------
+   GAIN / LOSS %
+---------------------------------------------------- */
+.gain-positive {
+    color: #2e7d32;
+    font-weight: 900;
+}
+
+.gain-negative {
+    color: #c62828;
+    font-weight: 900;
+}
