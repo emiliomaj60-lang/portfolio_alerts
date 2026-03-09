@@ -61,24 +61,24 @@
             background: #e3f2fd;
         }
 
-        /* MENU FLOTANTE */
-        .row-menu {
-            position: absolute;
+        /* MENU FISSO SOTTO LA TABELLA */
+        .row-menu-fixed {
+            margin-top: 20px;
             background: white;
             border: 2px solid #ccc;
             border-radius: 10px;
             box-shadow: 0 4px 14px rgba(0,0,0,0.20);
-            min-width: 260px;
-            z-index: 9999;
             padding: 10px 0;
+            width: 260px;
             display: none;
         }
 
         .row-menu-item {
-            padding: 24px 28px;
+            padding: 18px 20px;
             cursor: pointer;
-            font-size: 28px;
+            font-size: 22px;
             font-weight: 600;
+            text-align: center;
         }
 
         .row-menu-item:hover {
@@ -123,6 +123,12 @@
         {% endfor %}
     </table>
 
+    <!-- MENU FISSO SOTTO LA TABELLA -->
+    <div id="rowMenu" class="row-menu-fixed">
+        <div class="row-menu-item" id="menuCopy">Copia</div>
+        <div class="row-menu-item" id="menuDelete">Elimina</div>
+    </div>
+
     <!-- BOX SALVA MODIFICA -->
     <div id="saveBox" style="display:none; text-align:center; margin-top:20px;">
         <button id="saveButton" class="btn-small" style="font-size:20px; padding:12px 20px;">
@@ -144,12 +150,6 @@
         </form>
     </div>
 
-</div>
-
-<!-- MENU FLOTANTE -->
-<div id="rowMenu" class="row-menu">
-    <div class="row-menu-item" id="menuCopy">Copia</div>
-    <div class="row-menu-item" id="menuDelete">Elimina</div>
 </div>
 
 <script>
@@ -231,18 +231,19 @@ function saveNewRowFromClone(clone) {
     });
 }
 
-/* --- RIGHE CLICCABILI: APRE MENU --- */
+/* --- RIGHE CLICCABILI: APRE MENU FISSO --- */
 document.querySelectorAll(".row-azioni").forEach(row => {
     row.addEventListener("click", function (e) {
-        e.stopPropagation(); // evita chiusura immediata
+        e.stopPropagation();
 
         const index = this.getAttribute("data-index");
         const menu = document.getElementById("rowMenu");
 
-        const rect = this.getBoundingClientRect();
-        menu.style.top = (rect.bottom + window.scrollY) + "px";
-        menu.style.left = (rect.left + 20) + "px";
+        // Evidenzia la riga selezionata
+        document.querySelectorAll(".row-azioni").forEach(r => r.style.background = "");
+        this.style.background = "#e3f2fd";
 
+        // Mostra il menu fisso
         menu.style.display = "block";
         menu.setAttribute("data-index", index);
     });
@@ -269,6 +270,9 @@ document.getElementById("menuDelete").addEventListener("click", function () {
 document.addEventListener("click", function () {
     const menu = document.getElementById("rowMenu");
     menu.style.display = "none";
+
+    // Rimuovi evidenziazione riga
+    document.querySelectorAll(".row-azioni").forEach(r => r.style.background = "");
 });
 </script>
 
