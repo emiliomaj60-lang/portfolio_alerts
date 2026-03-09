@@ -50,7 +50,7 @@
         <tr>
             <td>{{ r.nome }}</td>
             <td>{{ r.quantita_tot|int }}</td>
-            <td>{{ r.totale_speso|round(2) }}</td>
+            <td>{{ "{:,.1f}".format(r.totale_speso).replace(",", "X").replace(".", ",").replace("X", ".") }}</td>
             <td>{{ r.spese_vendita_tot|round(2) }}</td>
 
             <!-- Badge Pareggio -->
