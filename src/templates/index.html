@@ -193,7 +193,7 @@
             <b>Guadagno Totale:</b>
             <span style="font-weight:bold;
                 color: {% if guadagno_totale >= 0 %}#2e7d32{% else %}#c62828{% endif %};">
-                {{ guadagno_totale|round(1) }} €
+                {{ "{:,.1f}".format(guadagno_totale).replace(",", "X").replace(".", ",").replace("X", ".") }} €
             </span>
         </p>
         <p>
