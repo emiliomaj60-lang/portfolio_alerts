@@ -123,6 +123,13 @@
         {% endfor %}
     </table>
 
+    <!-- BOX SALVA MODIFICA -->
+    <div id="saveBox" style="display:none; text-align:center; margin-top:20px;">
+        <button id="saveButton" class="btn-small" style="font-size:20px; padding:12px 20px;">
+            💾 Salva Modifica
+        </button>
+    </div>
+
     <div class="form-box">
         <h3>➕ Aggiungi Nuovo Titolo</h3>
 
@@ -168,7 +175,7 @@ function deleteRow(index) {
     }).then(() => location.reload());
 }
 
-/* --- DUPLICA RIGA TRAMITE INDICE --- */
+/* --- DUPLICA RIGA TRAMITE INDICE (con bottone Salva esterno) --- */
 function duplicateRowByIndex(index) {
     const rows = document.querySelectorAll(".row-azioni");
     const row = rows[index];
@@ -176,19 +183,28 @@ function duplicateRowByIndex(index) {
     const clone = row.cloneNode(true);
     const cells = clone.querySelectorAll("td");
 
+    // Trasforma le celle in input
     cells.forEach((cell, i) => {
         const value = cell.innerText.trim();
-        cell.innerHTML = `<input value="${value}">`;
+        cell.innerHTML = `<input value="${value}" style="width:100%; padding:6px;">`;
     });
 
-    clone.innerHTML += `<td><button onclick="saveNewRow(this)">Salva</button></td>`;
+    // Inserisci la riga sotto quella originale
     row.parentNode.insertBefore(clone, row.nextSibling);
+
+    // Mostra il box Salva
+    const saveBox = document.getElementById("saveBox");
+    saveBox.style.display = "block";
+
+    // Imposta l'azione del pulsante Salva
+    document.getElementById("saveButton").onclick = function () {
+        saveNewRowFromClone(clone);
+    };
 }
 
 /* --- SALVA LA RIGA DUPLICATA --- */
-function saveNewRow(button) {
-    const row = button.closest("tr");
-    const inputs = row.querySelectorAll("input");
+function saveNewRowFromClone(clone) {
+    const inputs = clone.querySelectorAll("input");
 
     const data = {
         nome: inputs[0].value,
@@ -218,7 +234,7 @@ function saveNewRow(button) {
 /* --- RIGHE CLICCABILI: APRE MENU --- */
 document.querySelectorAll(".row-azioni").forEach(row => {
     row.addEventListener("click", function (e) {
-        e.stopPropagation(); // 🔥 evita chiusura immediata
+        e.stopPropagation(); // evita chiusura immediata
 
         const index = this.getAttribute("data-index");
         const menu = document.getElementById("rowMenu");
@@ -250,7 +266,7 @@ document.getElementById("menuDelete").addEventListener("click", function () {
 });
 
 /* --- CHIUDI MENU CLICCANDO FUORI --- */
-document.addEventListener("click", function (e) {
+document.addEventListener("click", function () {
     const menu = document.getElementById("rowMenu");
     menu.style.display = "none";
 });
