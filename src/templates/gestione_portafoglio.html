@@ -168,17 +168,17 @@ function deleteRow(index) {
     }).then(() => location.reload());
 }
 
-/* --- DUPLICA RIGA (versione originale) --- */
-function duplicateRow(button) {
-    const row = button.closest("tr");
-    const clone = row.cloneNode(true);
+/* --- DUPLICA RIGA TRAMITE INDICE --- */
+function duplicateRowByIndex(index) {
+    const rows = document.querySelectorAll(".row-azioni");
+    const row = rows[index];
 
+    const clone = row.cloneNode(true);
     const cells = clone.querySelectorAll("td");
-    cells.forEach((cell, index) => {
-        if (index < cells.length) {
-            const value = cell.innerText.trim();
-            cell.innerHTML = `<input value="${value}">`;
-        }
+
+    cells.forEach((cell, i) => {
+        const value = cell.innerText.trim();
+        cell.innerHTML = `<input value="${value}">`;
     });
 
     clone.innerHTML += `<td><button onclick="saveNewRow(this)">Salva</button></td>`;
@@ -217,7 +217,9 @@ function saveNewRow(button) {
 
 /* --- RIGHE CLICCABILI: APRE MENU --- */
 document.querySelectorAll(".row-azioni").forEach(row => {
-    row.addEventListener("click", function () {
+    row.addEventListener("click", function (e) {
+        e.stopPropagation(); // 🔥 evita chiusura immediata
+
         const index = this.getAttribute("data-index");
         const menu = document.getElementById("rowMenu");
 
@@ -228,6 +230,11 @@ document.querySelectorAll(".row-azioni").forEach(row => {
         menu.style.display = "block";
         menu.setAttribute("data-index", index);
     });
+});
+
+/* --- EVITA CHIUSURA CLICCANDO DENTRO IL MENU --- */
+document.getElementById("rowMenu").addEventListener("click", function(e) {
+    e.stopPropagation();
 });
 
 /* --- COPIA --- */
@@ -242,29 +249,10 @@ document.getElementById("menuDelete").addEventListener("click", function () {
     deleteRow(index);
 });
 
-/* --- DUPLICA RIGA TRAMITE INDICE --- */
-function duplicateRowByIndex(index) {
-    const rows = document.querySelectorAll(".row-azioni");
-    const row = rows[index];
-
-    const clone = row.cloneNode(true);
-    const cells = clone.querySelectorAll("td");
-
-    cells.forEach((cell, i) => {
-        const value = cell.innerText.trim();
-        cell.innerHTML = `<input value="${value}">`;
-    });
-
-    clone.innerHTML += `<td><button onclick="saveNewRow(this)">Salva</button></td>`;
-    row.parentNode.insertBefore(clone, row.nextSibling);
-}
-
 /* --- CHIUDI MENU CLICCANDO FUORI --- */
 document.addEventListener("click", function (e) {
     const menu = document.getElementById("rowMenu");
-    if (!menu.contains(e.target)) {
-        menu.style.display = "none";
-    }
+    menu.style.display = "none";
 });
 </script>
 
