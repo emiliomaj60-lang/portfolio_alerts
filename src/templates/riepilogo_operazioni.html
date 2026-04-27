@@ -92,14 +92,15 @@
                     {% if r.guadagno_netto is not none %}
                         {% if r.guadagno_netto >= 0 %}
                             <span class="guadagno-netto-inline prezzo-up">
-                                +{{ r.guadagno_netto|round(2) }} €
+                                +{{ r.guadagno_netto|round(0)|int }} €
                             </span>
                         {% else %}
                             <span class="guadagno-netto-inline prezzo-down">
-                                {{ r.guadagno_netto|round(2) }} €
+                                {{ r.guadagno_netto|round(0)|int }} €
                             </span>
                         {% endif %}
                     {% endif %}
+
 
                 {% else %}
                     <span style="color:#999;">n/d</span>
