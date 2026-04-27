@@ -360,9 +360,9 @@ def riepilogo_operazioni():
     comm_acq_min = costi["commis_min_acquisto"]
 
     # 🔵 COSTI DI VENDITA
-    spese_vend_fisse = costi["spese_vendita"]          # spesa fissa vendita
+    spese_vend_fisse = costi["spese_vendita"]
     comm_vend_perc = costi["commissioni_vendita"] / 100
-    comm_vend_min = costi["commis_min_vendita"]        # minimo vendita
+    comm_vend_min = costi["commis_min_vendita"]
 
     path = "data/portfolio.csv"
 
@@ -375,10 +375,8 @@ def riepilogo_operazioni():
         "totale_speso": 0.0,
         "spese_vendita_tot": 0.0,
         "prezzo_pareggio": 0.0,
-        "prezzo_attuale": None   # 🔵 NUOVO CAMPO
+        "prezzo_attuale": None
     })
-
-
 
     # ---------------------------------------------------------
     # 🔵 CALCOLO TOTALE SPESO (acquisto + spese acquisto)
@@ -401,13 +399,12 @@ def riepilogo_operazioni():
 
             totale_speso_lotto = valore_acquisto + spese_acq_fisse + commissioni_acq
 
-            # Accumulo
             dati[symbol]["nome"] = nome
             dati[symbol]["quantita_tot"] += q
             dati[symbol]["totale_speso"] += totale_speso_lotto
 
     # ---------------------------------------------------------
-    # 🔵 CALCOLO SPESE DI VENDITA TOTALI (regola definitiva)
+    # 🔵 CALCOLO SPESE DI VENDITA TOTALI
     # ---------------------------------------------------------
     riepilogo = []
     for symbol, info in dati.items():
@@ -421,7 +418,7 @@ def riepilogo_operazioni():
         # Minimo vendita
         spese_vendita_base = max(spese_vendita_percentuale, comm_vend_min)
 
-        # 🔵 AGGIUNGI anche la spesa fissa vendita
+        # Aggiungi spesa fissa
         spese_vendita_tot = spese_vendita_base + spese_vend_fisse
 
         # Prezzo pareggio
@@ -439,12 +436,23 @@ def riepilogo_operazioni():
             "prezzo_pareggio": prezzo_pareggio
         })
 
-    # 🔵 AGGIUNGI PREZZO ATTUALE A OGNI TITOLO
+    # ---------------------------------------------------------
+    # 🔵 AGGIUNGI PREZZO ATTUALE E GUADAGNO NETTO
+    # ---------------------------------------------------------
     for item in riepilogo:
         symbol = item["symbol"]
+
+        # Prezzo attuale
         if symbol in prezzi_attuali:
             item["prezzo_attuale"] = prezzi_attuali[symbol]
         else:
             item["prezzo_attuale"] = None
+
+        # Guadagno netto (solo se abbiamo il prezzo attuale)
+        if item["prezzo_attuale"] is not None:
+            valore_attuale = item["quantita_tot"] * item["prezzo_attuale"]
+            item["guadagno_netto"] = valore_attuale - item["totale_speso"] - item["spese_vendita_tot"]
+        else:
+            item["guadagno_netto"] = None
 
     return render_template("riepilogo_operazioni.html", riepilogo=riepilogo)
