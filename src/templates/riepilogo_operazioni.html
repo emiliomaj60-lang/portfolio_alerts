@@ -19,6 +19,14 @@
             text-align: center;
             font-weight: bold;
         }
+
+        /* Stile per la riga guadagno netto sotto il prezzo attuale */
+        .guadagno-netto-inline {
+            display: block;
+            font-size: 18px;
+            margin-top: 6px;
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -43,7 +51,6 @@
             <th>Spese Vendita</th>
             <th>Prezzo Pareggio</th>
             <th>Prezzo Attuale</th>
-            <th>Guadagno Netto</th>
         </tr>
 
         {% for r in riepilogo %}
@@ -64,7 +71,7 @@
                 </span>
             </td>
 
-            <!-- Prezzo Attuale con colore dinamico -->
+            <!-- Prezzo Attuale + Guadagno Netto sotto -->
             <td>
                 {% if r.prezzo_attuale %}
                     {% set diff = ((r.prezzo_attuale - r.prezzo_pareggio) / r.prezzo_pareggio) * 100 %}
@@ -80,23 +87,20 @@
                             <span class="loss-inline">({{ diff|round(2) }}%)</span>
                         </span>
                     {% endif %}
-                {% else %}
-                    <span style="color:#999;">n/d</span>
-                {% endif %}
-            </td>
 
-            <!-- 💰 Guadagno Netto (al netto delle spese di vendita) -->
-            <td>
-                {% if r.guadagno_netto is not none %}
-                    {% if r.guadagno_netto >= 0 %}
-                        <span class="prezzo-attuale prezzo-up">
-                            +{{ r.guadagno_netto|round(2) }} €
-                        </span>
-                    {% else %}
-                        <span class="prezzo-attuale prezzo-down">
-                            {{ r.guadagno_netto|round(2) }} €
-                        </span>
+                    <!-- 💰 Guadagno Netto sotto il prezzo attuale -->
+                    {% if r.guadagno_netto is not none %}
+                        {% if r.guadagno_netto >= 0 %}
+                            <span class="guadagno-netto-inline prezzo-up">
+                                +{{ r.guadagno_netto|round(2) }} €
+                            </span>
+                        {% else %}
+                            <span class="guadagno-netto-inline prezzo-down">
+                                {{ r.guadagno_netto|round(2) }} €
+                            </span>
+                        {% endif %}
                     {% endif %}
+
                 {% else %}
                     <span style="color:#999;">n/d</span>
                 {% endif %}
