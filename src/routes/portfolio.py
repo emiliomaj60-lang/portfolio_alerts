@@ -56,9 +56,13 @@ def index():
     totale_speso_portafoglio = 0
     totale_incassato_portafoglio = 0
 
+    # 🔥 LISTE PER CALCOLARE GUADAGNI POSITIVI E NEGATIVI
+    lista_guadagni = []
+
     for t in titoli:
         t.prezzo_attuale = prezzi_salvati.get(t.symbol, None)
 
+        # Gain/Loss %
         if t.prezzo_attuale:
             try:
                 t.gain_loss = ((t.prezzo_attuale - t.prezzo_carico) / t.prezzo_carico) * 100
@@ -67,6 +71,7 @@ def index():
         else:
             t.gain_loss = None
 
+        # Calcolo totale speso
         valore_acq = t.prezzo_carico * t.quantita
 
         comm_acq = valore_acq * (costi["commissioni_acquisto"] / 100)
@@ -76,10 +81,12 @@ def index():
         totale_speso = valore_acq + costi["spese_acquisto"] + comm_acq
         totale_speso_portafoglio += totale_speso
 
+        # Se non abbiamo prezzo attuale → niente guadagno netto
         if not t.prezzo_attuale:
             t.guadagno_netto = None
             continue
 
+        # Calcolo totale incassabile
         valore_vend = t.prezzo_attuale * t.quantita
 
         comm_vend = valore_vend * (costi["commissioni_vendita"] / 100)
@@ -89,9 +96,19 @@ def index():
         totale_incassato = valore_vend - costi["spese_vendita"] - comm_vend
         totale_incassato_portafoglio += totale_incassato
 
+        # Guadagno netto del singolo titolo
         t.guadagno_netto = totale_incassato - totale_speso
 
+        # 🔥 Aggiungiamo alla lista per i totali positivi/negativi
+        lista_guadagni.append(t.guadagno_netto)
+
+    # 🔥 Totale generale
     guadagno_totale = totale_incassato_portafoglio - totale_speso_portafoglio
+
+    # 🔥 Totali separati
+    guadagni_positivi = sum(x for x in lista_guadagni if x > 0)
+    guadagni_negativi = sum(x for x in lista_guadagni if x < 0)
+
     ultimo_agg = leggi_ultimo_aggiornamento()
 
     return render_template(
@@ -100,7 +117,9 @@ def index():
         ultimo_aggiornamento=ultimo_agg,
         totale_speso_portafoglio=round(totale_speso_portafoglio, 2),
         totale_incassato_portafoglio=round(totale_incassato_portafoglio, 2),
-        guadagno_totale=round(guadagno_totale, 2)
+        guadagno_totale=round(guadagno_totale, 2),
+        guadagni_positivi=round(guadagni_positivi, 2),
+        guadagni_negativi=round(guadagni_negativi, 2)
     )
 
 # ---------------------------------------------------------
