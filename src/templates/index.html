@@ -191,7 +191,7 @@
 
         <!-- 🔥 MACRO PER FORMATTAZIONE ITALIANA -->
         {% macro fmt(v) -%}
-            {{ "{:,.1f}".format(v).replace(",", "X").replace(".", ",").replace("X", ".") }}
+            {{ "{:,.0f}".format(v).replace(",", "X").replace(".", ",").replace("X", ".") }}
         {%- endmacro %}
 
         <p>
