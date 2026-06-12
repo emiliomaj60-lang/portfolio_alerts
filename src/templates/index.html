@@ -189,13 +189,31 @@
         {{ "{:,.1f}".format(totale_incassato_portafoglio).replace(",", "X").replace(".", ",").replace("X", ".") }} €
         </p>
 
+        {% set fmt = lambda v: "{:,.1f}".format(v).replace(",", "X").replace(".", ",").replace("X", ".") %}
+
         <p>
             <b>Guadagno Totale:</b>
+
+            <!-- Totale generale -->
             <span style="font-weight:bold;
                 color: {% if guadagno_totale >= 0 %}#2e7d32{% else %}#c62828{% endif %};">
-                {{ "{:,.1f}".format(guadagno_totale).replace(",", "X").replace(".", ",").replace("X", ".") }} €
+                {{ fmt(guadagno_totale) }} €
+            </span>
+
+            <!-- Dettaglio (positivi | negativi) -->
+            <span style="font-size:22px; margin-left:10px;">
+                (
+                <span style="color:#2e7d32; font-weight:bold;">
+                    +{{ fmt(guadagni_positivi) }} €
+                </span>
+                |
+                <span style="color:#c62828; font-weight:bold;">
+                    {{ fmt(guadagni_negativi) }} €
+                </span>
+                )
             </span>
         </p>
+
         <p>
             <b>Percentuale Totale:</b>
             {% set percentuale_totale = ((totale_incassato_portafoglio - totale_speso_portafoglio) / totale_speso_portafoglio * 100) %}
