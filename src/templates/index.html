@@ -71,8 +71,8 @@
 </head>
 
 <body>
-    
- <!-- 🔧 Bottone gestione portafoglio -->
+
+<!-- 🔧 Bottone gestione portafoglio -->
 <div style="position:absolute; top:20px; right:20px; z-index:999;">
     <a href="/gestione_portafoglio"
        style="font-size:18px; padding:12px 18px; background:#19d244; color:rgb(26, 9, 9);
@@ -114,7 +114,7 @@
     <div class="center">
         <button class="refresh-all-btn" onclick="aggiornaTuttiYF()">🔄 Aggiorna Tutti (yfinance)</button>
     </div>
-     
+
     <div style="height:60px;"></div> <!-- RIGA VUOTA -->
 
     <!-- 🔵 TABELLA PORTAFOGLIO -->
@@ -189,7 +189,10 @@
         {{ "{:,.1f}".format(totale_incassato_portafoglio).replace(",", "X").replace(".", ",").replace("X", ".") }} €
         </p>
 
-        {% set fmt = lambda v: "{:,.1f}".format(v).replace(",", "X").replace(".", ",").replace("X", ".") %}
+        <!-- 🔥 MACRO PER FORMATTAZIONE ITALIANA -->
+        {% macro fmt(v) -%}
+            {{ "{:,.1f}".format(v).replace(",", "X").replace(".", ",").replace("X", ".") }}
+        {%- endmacro %}
 
         <p>
             <b>Guadagno Totale:</b>
@@ -217,7 +220,7 @@
         <p>
             <b>Percentuale Totale:</b>
             {% set percentuale_totale = ((totale_incassato_portafoglio - totale_speso_portafoglio) / totale_speso_portafoglio * 100) %}
-            
+
             <span style="font-weight:bold;
                 color: {% if percentuale_totale >= 0 %}#2e7d32{% else %}#c62828{% endif %};">
                 {{ percentuale_totale|round(2) }}%
