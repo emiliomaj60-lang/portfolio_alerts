@@ -266,57 +266,17 @@ def pagina_archivio_vendute():
     g = Github(os.environ["GITHUB_TOKEN"])
     repo = g.get_repo(GITHUB_REPO)
 
-    try:
-        file = repo.get_contents("data/archivio_az_vend.csv")
-        csv_text = base64.b64decode(file.content).decode("utf-8")
-    except:
-        return render_template("archivio_vendute.html", archivio=[])
+    file = repo.get_contents("archivio_az_vend.csv")  # <-- cambia qui se è in /data
+    csv_text = base64.b64decode(file.content).decode("utf-8")
 
     righe = csv_text.splitlines()
-
     archivio = []
 
-    # 🔥 Salta header
     for riga in righe[1:]:
-        # split manuale → FUNZIONA SEMPRE
         campi = riga.split(",")
-
-        # porta la riga a 15 colonne
-        while len(campi) < 15:
-            campi.append("")
-
-        nome = campi[2].strip()
-        quantita = campi[3].strip()
-        prezzo_carico = campi[4].strip()
-        data_acquisto = campi[5].strip()
-        data_vendita = campi[6].strip()
-        prezzo_vendita = campi[10].strip()
-
-        # se mancano campi fondamentali → salta
-        if not nome or not quantita or not prezzo_carico or not prezzo_vendita:
-            continue
-
-        try:
-            q = float(quantita)
-            pc = float(prezzo_carico)
-            pv = float(prezzo_vendita)
-        except:
-            continue
-
-        guadagno_netto = (pv - pc) * q
-
-        archivio.append({
-            "nome": nome,
-            "quantita": int(q),
-            "prezzo_carico": pc,
-            "data_acquisto": data_acquisto,
-            "data_vendita": data_vendita,
-            "prezzo_vendita": pv,
-            "guadagno_netto": round(guadagno_netto, 2)
-        })
+        archivio.append(campi)
 
     return render_template("archivio_vendute.html", archivio=archivio)
-
 
 # --- AGGIUNGI TITOLO (scrive su GitHub) ---
 @portfolio_bp.route("/gestione_portafoglio/add", methods=["POST"])
