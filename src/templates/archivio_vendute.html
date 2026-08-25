@@ -15,12 +15,12 @@
         th, td {
             padding: 14px;
             border-bottom: 1px solid #ccc;
-            font-size: 18px;
+            font-size: 20px;
         }
         th {
             background: #e3f2fd;
             color: #0d47a1;
-            font-size: 20px;
+            font-size: 22px;
         }
     </style>
 </head>
@@ -28,7 +28,7 @@
 <body>
 
 <header class="header-scenografico">
-    <h1>📁 Archivio Azioni Vendute (DEBUG COMPLETO)</h1>
+    <h1>📁 Archivio Azioni Vendute</h1>
 </header>
 
 <div class="container">
@@ -47,46 +47,40 @@
         </p>
     {% else %}
 
+    <!-- 🔥 Totale guadagni vendite -->
+    <div style="font-size:26px; margin:20px 0; font-weight:bold;">
+        Totale guadagni vendite:
+        <span style="color:{% if totale_guadagni >= 0 %}#2e7d32{% else %}#c62828{% endif %};">
+            {{ totale_guadagni }} €
+        </span>
+    </div>
+
     <table>
         <tr>
-            <th>0 ISIN</th>
-            <th>1 Symbol</th>
-            <th>2 Nome</th>
-            <th>3 Quantità</th>
-            <th>4 Prezzo Carico</th>
-            <th>5 Data Acquisto</th>
-            <th>6 Data Vendita</th>
-            <th>7 Costo Aq Banca</th>
-            <th>8 Costo Aq Oper</th>
-            <th>9 Costo Aq Varie</th>
-            <th>10 Prezzo Vendita</th>
-            <th>11 Costo Ve Banca</th>
-            <th>12 Costo Ve Oper</th>
-            <th>13 Costo Ve Varie</th>
-            <th>14 Dividendi</th>
+            <th>Nome</th>
+            <th>Quantità</th>
+            <th>Prezzo Carico</th>
+            <th>Data Acquisto</th>
+            <th>Prezzo Vendita</th>
+            <th>Data Vendita</th>
+            <th>Guadagno Netto</th>
         </tr>
 
-        {% for r in archivio %}
+        {% for v in archivio %}
         <tr>
-            <td>{{ r[0] }}</td>
-            <td>{{ r[1] }}</td>
-            <td>{{ r[2] }}</td>
-            <td>{{ r[3] }}</td>
-            <td>{{ r[4] }}</td>
-            <td>{{ r[5] }}</td>
-            <td>{{ r[6] }}</td>
-            <td>{{ r[7] }}</td>
-            <td>{{ r[8] }}</td>
-            <td>{{ r[9] }}</td>
-            <td>{{ r[10] }}</td>
-            <td>{{ r[11] }}</td>
-            <td>{{ r[12] }}</td>
-            <td>{{ r[13] }}</td>
-            <td>{{ r[14] }}</td>
+            <td>{{ v.nome }}</td>
+            <td>{{ v.quantita }}</td>
+            <td>{{ v.prezzo_carico }} €</td>
+            <td>{{ v.data_acquisto }}</td>
+            <td>{{ v.prezzo_vendita }} €</td>
+            <td>{{ v.data_vendita }}</td>
+            <td style="font-weight:bold;
+                       color:{% if v.guadagno_netto >= 0 %}#2e7d32{% else %}#c62828{% endif %};">
+                {{ v.guadagno_netto }} €
+            </td>
         </tr>
         {% endfor %}
     </table>
-
     {% endif %}
 
 </div>
