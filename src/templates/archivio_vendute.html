@@ -41,17 +41,19 @@
         </a>
     </div>
 
-    {% if archivio|length == 0 %}
-        <p style="font-size:22px; color:#777; margin-top:20px;">
-            Nessuna azione venduta registrata.
-        </p>
-    {% else %}
+    {% if archivio|length > 0 %}
 
-    <!-- 🔥 Totale guadagni vendite -->
-    <div style="font-size:26px; margin:20px 0; font-weight:bold;">
-        Totale guadagni vendite:
-        <span style="color:{% if totale_guadagni >= 0 %}#2e7d32{% else %}#c62828{% endif %};">
-            {{ totale_guadagni }} €
+    <!-- 🔥 Totali -->
+    <div style="font-size:24px; margin:20px 0; font-weight:bold;">
+        Guadagno lordo totale:
+        <span style="color:#2e7d32;">{{ totale_guadagni }} €</span>
+        <br>
+        Spese totali:
+        <span style="color:#c62828;">{{ totale_spese }} €</span>
+        <br>
+        Guadagno netto totale:
+        <span style="color:{% if totale_netto >= 0 %}#2e7d32{% else %}#c62828{% endif %};">
+            {{ totale_netto }} €
         </span>
     </div>
 
@@ -60,9 +62,11 @@
             <th>Nome</th>
             <th>Quantità</th>
             <th>Prezzo Carico</th>
-            <th>Data Acquisto</th>
             <th>Prezzo Vendita</th>
             <th>Data Vendita</th>
+            <th>Giorni</th>
+            <th>Guadagno Lordo</th>
+            <th>Spese</th>
             <th>Guadagno Netto</th>
         </tr>
 
@@ -71,16 +75,29 @@
             <td>{{ v.nome }}</td>
             <td>{{ v.quantita }}</td>
             <td>{{ v.prezzo_carico }} €</td>
-            <td>{{ v.data_acquisto }}</td>
             <td>{{ v.prezzo_vendita }} €</td>
             <td>{{ v.data_vendita }}</td>
-            <td style="font-weight:bold;
-                       color:{% if v.guadagno_netto >= 0 %}#2e7d32{% else %}#c62828{% endif %};">
+            <td>{{ v.giorni }}</td>
+
+            <td style="font-weight:bold; color:{% if v.guadagno_lordo >= 0 %}#2e7d32{% else %}#c62828{% endif %};">
+                {{ v.guadagno_lordo }} €
+            </td>
+
+            <td style="color:#c62828;">
+                {{ v.spese }} €
+            </td>
+
+            <td style="font-weight:bold; color:{% if v.guadagno_netto >= 0 %}#2e7d32{% else %}#c62828{% endif %};">
                 {{ v.guadagno_netto }} €
             </td>
         </tr>
         {% endfor %}
     </table>
+
+    {% else %}
+        <p style="font-size:22px; color:#777; margin-top:20px;">
+            Nessuna azione venduta registrata.
+        </p>
     {% endif %}
 
 </div>
