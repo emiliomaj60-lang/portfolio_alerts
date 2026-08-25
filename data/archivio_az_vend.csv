@@ -1,0 +1,8 @@
+isin,symbol,nome,quantita,prezzo_carico,data_acquisto,data_vendita,costo_aq_banca,costo_aq_oper,costo_aq_varie,prezzo_vendita,costo_ve_banca,costo_ve_oper,costo_ve_varie,dividendi
+IT0005438046,IOT,Seco ,1000,2.838,26/02/2026,15/07/2026,2.5,7.5,,3.395,2.5,7.5,,
+IT0005244402,BFF,BFF Bank,500,1.48,17/02/2026,13/04/2026,2.5,7.5,2,1.75,1.25,3.75,,
+IT0005244402,BFF,BFF Bank,500,1.35,17/02/2026,13/04/2026,2.5,7.5,2,1.75,1.25,3.75,,
+IT0005573438,LS,Lemon Sistemi,1000,1.48,21/04/2026,13/05/2026,2.5,7.5,,1.55,2.5,7.5,,
+IT0001469953,STF,SOFTLAB,1000,1.22,18/05/2026,22/05/2026,2.5,7.5,,1.62,2.5,7.5,,
+IT0005654683,FDA,Fidia,50000,0.0062,22/05/2026,24/06/2026,2.5,7.5,,0.0066,2.5,7.5,,
+IT0005546103,CYB,Cyberoo,1000,1.09,06/03/2026,02/06/2026,1.25,3.75,,1.32,2.5,7.5,,
