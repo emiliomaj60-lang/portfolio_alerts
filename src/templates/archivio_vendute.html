@@ -22,6 +22,13 @@
             color: #0d47a1;
             font-size: 22px;
         }
+
+        .totali-box {
+            margin-top: 40px;
+            font-size: 30px;
+            font-weight: bold;
+            line-height: 1.6;
+        }
     </style>
 </head>
 
@@ -41,21 +48,11 @@
         </a>
     </div>
 
-    {% if archivio|length > 0 %}
-
-    <!-- 🔥 Totali -->
-    <div style="font-size:24px; margin:20px 0; font-weight:bold;">
-        Guadagno lordo totale:
-        <span style="color:#2e7d32;">{{ totale_guadagni }} €</span>
-        <br>
-        Spese totali:
-        <span style="color:#c62828;">{{ totale_spese }} €</span>
-        <br>
-        Guadagno netto totale:
-        <span style="color:{% if totale_netto >= 0 %}#2e7d32{% else %}#c62828{% endif %};">
-            {{ totale_netto }} €
-        </span>
-    </div>
+    {% if archivio|length == 0 %}
+        <p style="font-size:22px; color:#777; margin-top:20px;">
+            Nessuna azione venduta registrata.
+        </p>
+    {% else %}
 
     <table>
         <tr>
@@ -65,8 +62,6 @@
             <th>Prezzo Vendita</th>
             <th>Data Vendita</th>
             <th>Giorni</th>
-            <th>Guadagno Lordo</th>
-            <th>Spese</th>
             <th>Guadagno Netto</th>
         </tr>
 
@@ -79,25 +74,28 @@
             <td>{{ v.data_vendita }}</td>
             <td>{{ v.giorni }}</td>
 
-            <td style="font-weight:bold; color:{% if v.guadagno_lordo >= 0 %}#2e7d32{% else %}#c62828{% endif %};">
-                {{ v.guadagno_lordo }} €
-            </td>
-
-            <td style="color:#c62828;">
-                {{ v.spese }} €
-            </td>
-
-            <td style="font-weight:bold; color:{% if v.guadagno_netto >= 0 %}#2e7d32{% else %}#c62828{% endif %};">
+            <td style="font-weight:bold;
+                       color:{% if v.guadagno_netto >= 0 %}#2e7d32{% else %}#c62828{% endif %};">
                 {{ v.guadagno_netto }} €
             </td>
         </tr>
         {% endfor %}
     </table>
 
-    {% else %}
-        <p style="font-size:22px; color:#777; margin-top:20px;">
-            Nessuna azione venduta registrata.
-        </p>
+    <!-- 🔥 Totali sotto la tabella -->
+    <div class="totali-box">
+        Guadagno lordo totale:
+        <span style="color:#2e7d32;">{{ totale_guadagni }} €</span>
+        <br>
+        Spese totali:
+        <span style="color:#c62828;">{{ totale_spese }} €</span>
+        <br>
+        Guadagno netto totale:
+        <span style="color:{% if totale_netto >= 0 %}#2e7d32{% else %}#c62828{% endif %};">
+            {{ totale_netto }} €
+        </span>
+    </div>
+
     {% endif %}
 
 </div>
