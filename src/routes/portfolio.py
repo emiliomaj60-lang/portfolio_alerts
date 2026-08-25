@@ -281,13 +281,14 @@ def pagina_archivio_vendute():
     archivio = []
 
     for r in reader:
+
         # 🔥 Legge tutti i campi ma usa solo quelli richiesti
         nome = r.get("nome", "").strip()
-        quantita = r.get("quantita", "")
-        prezzo_carico = r.get("prezzo_carico", "")
-        data_acquisto = r.get("data_acquisto", "")
-        data_vendita = r.get("data_vendita", "")
-        prezzo_vendita = r.get("prezzo_vendita", "")
+        quantita = r.get("quantita", "").strip()
+        prezzo_carico = r.get("prezzo_carico", "").strip()
+        data_acquisto = r.get("data_acquisto", "").strip()
+        data_vendita = r.get("data_vendita", "").strip()
+        prezzo_vendita = r.get("prezzo_vendita", "").strip()
 
         # 🔥 Se uno dei campi fondamentali è vuoto → salta la riga
         if not nome or not quantita or not prezzo_carico or not prezzo_vendita:
