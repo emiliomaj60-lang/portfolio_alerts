@@ -274,38 +274,26 @@ def pagina_archivio_vendute():
 
     righe = csv_text.splitlines()
 
-    import csv
-    reader = csv.reader(righe)
-
     archivio = []
 
-    # salta header
-    next(reader, None)
+    # 🔥 Salta header
+    for riga in righe[1:]:
+        # split manuale → FUNZIONA SEMPRE
+        campi = riga.split(",")
 
-    for campi in reader:
-        # porta sempre la riga a 15 colonne, riempiendo i vuoti
+        # porta la riga a 15 colonne
         while len(campi) < 15:
             campi.append("")
 
-        isin = campi[0].strip()
-        symbol = campi[1].strip()
         nome = campi[2].strip()
         quantita = campi[3].strip()
         prezzo_carico = campi[4].strip()
         data_acquisto = campi[5].strip()
         data_vendita = campi[6].strip()
-        # questi li leggiamo ma non li usiamo ora
-        costo_aq_banca = campi[7].strip()
-        costo_aq_oper = campi[8].strip()
-        costo_aq_varie = campi[9].strip()
         prezzo_vendita = campi[10].strip()
-        costo_ve_banca = campi[11].strip()
-        costo_ve_oper = campi[12].strip()
-        costo_ve_varie = campi[13].strip()
-        dividendi = campi[14].strip()
 
+        # se mancano campi fondamentali → salta
         if not nome or not quantita or not prezzo_carico or not prezzo_vendita:
-            # se proprio manca uno di questi, saltiamo
             continue
 
         try:
@@ -328,6 +316,7 @@ def pagina_archivio_vendute():
         })
 
     return render_template("archivio_vendute.html", archivio=archivio)
+
 
 # --- AGGIUNGI TITOLO (scrive su GitHub) ---
 @portfolio_bp.route("/gestione_portafoglio/add", methods=["POST"])
