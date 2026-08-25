@@ -271,7 +271,11 @@ def pagina_archivio_vendute():
 
     righe = csv_text.splitlines()
     archivio = []
+
     totale_guadagni = 0
+    totale_spese = 0
+
+    from datetime import datetime
 
     for riga in righe[1:]:
         campi = riga.split(",")
@@ -284,7 +288,16 @@ def pagina_archivio_vendute():
         prezzo_carico = campi[4].strip()
         data_acquisto = campi[5].strip()
         data_vendita = campi[6].strip()
+
+        costo_aq_banca = campi[7].strip()
+        costo_aq_oper = campi[8].strip()
+        costo_aq_varie = campi[9].strip()
+
         prezzo_vendita = campi[10].strip()
+
+        costo_ve_banca = campi[11].strip()
+        costo_ve_oper = campi[12].strip()
+        costo_ve_varie = campi[13].strip()
 
         if not nome or not quantita or not prezzo_carico or not prezzo_vendita:
             continue
@@ -296,23 +309,50 @@ def pagina_archivio_vendute():
         except:
             continue
 
-        guadagno_netto = (pv - pc) * q
-        totale_guadagni += guadagno_netto
+        # 🔥 Calcolo guadagno SENZA costi
+        guadagno_lordo = (pv - pc) * q
+        totale_guadagni += guadagno_lordo
+
+        # 🔥 Calcolo spese (tutti i costi)
+        spese = 0
+        for costo in [costo_aq_banca, costo_aq_oper, costo_aq_varie,
+                      costo_ve_banca, costo_ve_oper, costo_ve_varie]:
+            if costo.strip() != "":
+                try:
+                    spese += float(costo)
+                except:
+                    pass
+
+        totale_spese += spese
+
+        # 🔥 Calcolo giorni mantenuti
+        try:
+            da = datetime.strptime(data_acquisto, "%d/%m/%Y")
+            dv = datetime.strptime(data_vendita, "%d/%m/%Y")
+            giorni = (dv - da).days
+        except:
+            giorni = ""
 
         archivio.append({
             "nome": nome,
             "quantita": int(q),
             "prezzo_carico": pc,
-            "data_acquisto": data_acquisto,
-            "data_vendita": data_vendita,
             "prezzo_vendita": pv,
-            "guadagno_netto": round(guadagno_netto, 2)
+            "data_vendita": data_vendita,
+            "giorni": giorni,
+            "guadagno_lordo": round(guadagno_lordo, 2),
+            "spese": round(spese, 2),
+            "guadagno_netto": round(guadagno_lordo - spese, 2)
         })
+
+    totale_netto = totale_guadagni - totale_spese
 
     return render_template(
         "archivio_vendute.html",
         archivio=archivio,
-        totale_guadagni=round(totale_guadagni, 2)
+        totale_guadagni=round(totale_guadagni, 2),
+        totale_spese=round(totale_spese, 2),
+        totale_netto=round(totale_netto, 2)
     )
 
 # --- AGGIUNGI TITOLO (scrive su GitHub) ---
