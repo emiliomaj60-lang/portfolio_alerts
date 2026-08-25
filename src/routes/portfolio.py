@@ -263,6 +263,53 @@ def gestione_portafoglio():
 
 @portfolio_bp.route("/archivio_vendute")
 def archivio_vendute():
+    g = Github(os.environ["GITHUB_TOKEN"])
+    repo = g.get_repo(GITHUB_REPO)
+
+    # 🔥 Legge il CSV delle azioni vendute
+    try:
+        file = repo.get_contents("data/archivio_az_vend.csv")
+        csv_text = base64.b64decode(file.content).decode("utf-8")
+    except:
+        # Se il file non esiste → archivio vuoto
+        return render_template("archivio_vendute.html", archivio=[])
+
+    righe = csv_text.splitlines()
+    header = righe[0].split(",")
+
+    archivio = []
+
+    for r in righe[1:]:
+        campi = r.split(",")
+
+        isin = campi[0]
+        symbol = campi[1]
+        nome = campi[2]
+        quantita = float(campi[3])
+        prezzo_carico = float(campi[4])
+        data_acquisto = campi[5]
+        data_vendita = campi[6]
+        prezzo_vendita = float(campi[10])  # colonna prezzo_vendita
+
+        # Calcolo guadagno netto
+        guadagno_netto = (prezzo_vendita - prezzo_carico) * quantita
+
+        archivio.append({
+            "isin": isin,
+            "symbol": symbol,
+            "nome": nome,
+            "quantita": int(quantita),
+            "prezzo_carico": prezzo_carico,
+            "data_acquisto": data_acquisto,
+            "data_vendita": data_vendita,
+            "prezzo_vendita": prezzo_vendita,
+            "guadagno_netto": round(guadagno_netto, 2)
+        })
+
+    return render_template("archivio_vendute.html", archivio=archivio)
+
+@portfolio_bp.route("/archivio_vendute")
+def archivio_vendute():
     # 🔥 Legge il CSV delle vendute da GitHub
     g = Github(os.environ["GITHUB_TOKEN"])
     repo = g.get_repo(GITHUB_REPO)
