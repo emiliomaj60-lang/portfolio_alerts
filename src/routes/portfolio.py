@@ -261,6 +261,37 @@ def gestione_portafoglio():
 
     return render_template("gestione_portafoglio.html", titoli=titoli)
 
+@portfolio_bp.route("/archivio_vendute")
+def archivio_vendute():
+    # 🔥 Legge il CSV delle vendute da GitHub
+    g = Github(os.environ["GITHUB_TOKEN"])
+    repo = g.get_repo(GITHUB_REPO)
+
+    try:
+        file = repo.get_contents("data/vendute.csv")
+        csv_text = base64.b64decode(file.content).decode("utf-8")
+    except:
+        # Se il file non esiste ancora → archivio vuoto
+        return render_template("archivio_vendute.html", archivio=[])
+
+    archivio = []
+    righe = csv_text.splitlines()
+
+    for r in righe[1:]:  # salta header
+        campi = r.split(",")
+
+        archivio.append({
+            "isin": campi[0],
+            "symbol": campi[1],
+            "nome": campi[2],
+            "quantita": campi[3],
+            "prezzo_carico": campi[4],
+            "prezzo_vendita": campi[5],
+            "data_vendita": campi[6],
+            "guadagno_netto": campi[7]
+        })
+
+    return render_template("archivio_vendute.html", archivio=archivio)
 
 # --- AGGIUNGI TITOLO (scrive su GitHub) ---
 @portfolio_bp.route("/gestione_portafoglio/add", methods=["POST"])
