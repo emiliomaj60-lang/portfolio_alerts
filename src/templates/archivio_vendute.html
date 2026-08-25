@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Archivio Azioni Vendute</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+        th, td {
+            padding: 14px;
+            border-bottom: 1px solid #ccc;
+            font-size: 20px;
+        }
+        th {
+            background: #e3f2fd;
+            color: #0d47a1;
+            font-size: 22px;
+        }
+        td {
+            font-size: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header-scenografico">
+    <h1>📁 Archivio Azioni Vendute</h1>
+</header>
+
+<div class="container">
+
+    <div style="margin-bottom:25px;">
+        <a href="/" style="font-size:20px; padding:12px 18px;
+                           background:#19d244; color:white;
+                           border-radius:8px; text-decoration:none;">
+            ⬅ Torna al Portafoglio
+        </a>
+    </div>
+
+    <table>
+        <tr>
+            <th>Nome</th>
+            <th>Quantità</th>
+            <th>Prezzo Carico</th>
+            <th>Prezzo Vendita</th>
+            <th>Data Vendita</th>
+            <th>Guadagno Netto</th>
+        </tr>
+
+        {% for v in archivio %}
+        <tr>
+            <td>{{ v.nome }}</td>
+            <td>{{ v.quantita }}</td>
+            <td>{{ v.prezzo_carico }} €</td>
+            <td>{{ v.prezzo_vendita }} €</td>
+            <td>{{ v.data_vendita }}</td>
+            <td style="font-weight:bold;
+                       color:{% if v.guadagno_netto >= 0 %}#2e7d32{% else %}#c62828{% endif %};">
+                {{ v.guadagno_netto }}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</div>
+
+</body>
+</html>
