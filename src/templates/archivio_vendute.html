@@ -22,9 +22,6 @@
             color: #0d47a1;
             font-size: 22px;
         }
-        td {
-            font-size: 20px;
-        }
     </style>
 </head>
 
@@ -44,11 +41,17 @@
         </a>
     </div>
 
+    {% if archivio|length == 0 %}
+        <p style="font-size:22px; color:#777; margin-top:20px;">
+            Nessuna azione venduta registrata.
+        </p>
+    {% else %}
     <table>
         <tr>
             <th>Nome</th>
             <th>Quantità</th>
             <th>Prezzo Carico</th>
+            <th>Data Acquisto</th>
             <th>Prezzo Vendita</th>
             <th>Data Vendita</th>
             <th>Guadagno Netto</th>
@@ -59,15 +62,17 @@
             <td>{{ v.nome }}</td>
             <td>{{ v.quantita }}</td>
             <td>{{ v.prezzo_carico }} €</td>
+            <td>{{ v.data_acquisto }}</td>
             <td>{{ v.prezzo_vendita }} €</td>
             <td>{{ v.data_vendita }}</td>
             <td style="font-weight:bold;
                        color:{% if v.guadagno_netto >= 0 %}#2e7d32{% else %}#c62828{% endif %};">
-                {{ v.guadagno_netto }}
+                {{ v.guadagno_netto }} €
             </td>
         </tr>
         {% endfor %}
     </table>
+    {% endif %}
 
 </div>
 
