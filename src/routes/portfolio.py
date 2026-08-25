@@ -262,7 +262,7 @@ def gestione_portafoglio():
     return render_template("gestione_portafoglio.html", titoli=titoli)
 
 @portfolio_bp.route("/archivio_vendute")
-def archivio_vendute():
+def pagina_archivio_vendute():
     g = Github(os.environ["GITHUB_TOKEN"])
     repo = g.get_repo(GITHUB_REPO)
 
@@ -275,28 +275,29 @@ def archivio_vendute():
         return render_template("archivio_vendute.html", archivio=[])
 
     righe = csv_text.splitlines()
-    header = righe[0].split(",")
+
+    import csv
+    reader = csv.DictReader(righe)
 
     archivio = []
 
-    for r in righe[1:]:
-        campi = r.split(",")
+    for r in reader:
+        # 🔥 Legge tutti i campi, ma usa solo quelli richiesti
+        try:
+            nome = r["nome"]
+            quantita = float(r["quantita"])
+            prezzo_carico = float(r["prezzo_carico"])
+            data_acquisto = r["data_acquisto"]
+            data_vendita = r["data_vendita"]
+            prezzo_vendita = float(r["prezzo_vendita"])
+        except:
+            # Se una riga ha valori vuoti → la saltiamo
+            continue
 
-        isin = campi[0]
-        symbol = campi[1]
-        nome = campi[2]
-        quantita = float(campi[3])
-        prezzo_carico = float(campi[4])
-        data_acquisto = campi[5]
-        data_vendita = campi[6]
-        prezzo_vendita = float(campi[10])  # colonna prezzo_vendita
-
-        # Calcolo guadagno netto
+        # 🔥 Calcolo guadagno netto
         guadagno_netto = (prezzo_vendita - prezzo_carico) * quantita
 
         archivio.append({
-            "isin": isin,
-            "symbol": symbol,
             "nome": nome,
             "quantita": int(quantita),
             "prezzo_carico": prezzo_carico,
