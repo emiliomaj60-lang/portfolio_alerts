@@ -24,24 +24,24 @@
         }
 
         .totali-box {
-            margin-top: 50px;
+            margin-top: 60px;
             text-align: center;
-            font-size: 34px;
+            font-size: 40px;
             font-weight: bold;
-            line-height: 1.8;
+            line-height: 1.9;
         }
     </style>
 </head>
 
 <body>
 
-<header class="header-scenografico">
-    <h1>📁 Archivio Azioni Vendute</h1>
+<header class="header-scenografico" style="text-align:center;">
+    <h1 style="font-size:48px; margin-top:20px;">📁 Archivio Azioni Vendute</h1>
 </header>
 
 <div class="container">
 
-    <div style="margin-bottom:25px;">
+    <div style="margin-bottom:25px; text-align:center;">
         <a href="/" style="font-size:20px; padding:12px 18px;
                            background:#19d244; color:white;
                            border-radius:8px; text-decoration:none;">
@@ -50,7 +50,7 @@
     </div>
 
     {% if archivio|length == 0 %}
-        <p style="font-size:22px; color:#777; margin-top:20px;">
+        <p style="font-size:22px; color:#777; margin-top:20px; text-align:center;">
             Nessuna azione venduta registrata.
         </p>
     {% else %}
