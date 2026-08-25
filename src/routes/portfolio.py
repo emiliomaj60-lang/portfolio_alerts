@@ -266,13 +266,18 @@ def pagina_archivio_vendute():
     g = Github(os.environ["GITHUB_TOKEN"])
     repo = g.get_repo(GITHUB_REPO)
 
-    file = repo.get_contents("archivio_az_vend.csv")  # <-- cambia qui se è in /data
-    csv_text = base64.b64decode(file.content).decode("utf-8")
+    try:
+        file = repo.get_contents("data/archivio_az_vend.csv")
+        csv_text = base64.b64decode(file.content).decode("utf-8", errors="replace")
+    except Exception as e:
+        return f"<h1>ERRORE LETTURA FILE</h1><pre>{e}</pre>"
 
     righe = csv_text.splitlines()
+
     archivio = []
 
-    for riga in righe[1:]:
+    for riga in righe:
+        # split grezzo
         campi = riga.split(",")
         archivio.append(campi)
 
