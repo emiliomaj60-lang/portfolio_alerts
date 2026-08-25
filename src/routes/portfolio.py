@@ -271,7 +271,6 @@ def pagina_archivio_vendute():
         file = repo.get_contents("data/archivio_az_vend.csv")
         csv_text = base64.b64decode(file.content).decode("utf-8")
     except:
-        # Se il file non esiste → archivio vuoto
         return render_template("archivio_vendute.html", archivio=[])
 
     righe = csv_text.splitlines()
@@ -282,19 +281,25 @@ def pagina_archivio_vendute():
     archivio = []
 
     for r in reader:
-        # 🔥 Legge tutti i campi, ma usa solo quelli richiesti
-        try:
-            nome = r["nome"]
-            quantita = float(r["quantita"])
-            prezzo_carico = float(r["prezzo_carico"])
-            data_acquisto = r["data_acquisto"]
-            data_vendita = r["data_vendita"]
-            prezzo_vendita = float(r["prezzo_vendita"])
-        except:
-            # Se una riga ha valori vuoti → la saltiamo
+        # 🔥 Legge tutti i campi ma usa solo quelli richiesti
+        nome = r.get("nome", "").strip()
+        quantita = r.get("quantita", "")
+        prezzo_carico = r.get("prezzo_carico", "")
+        data_acquisto = r.get("data_acquisto", "")
+        data_vendita = r.get("data_vendita", "")
+        prezzo_vendita = r.get("prezzo_vendita", "")
+
+        # 🔥 Se uno dei campi fondamentali è vuoto → salta la riga
+        if not nome or not quantita or not prezzo_carico or not prezzo_vendita:
             continue
 
-        # 🔥 Calcolo guadagno netto
+        try:
+            quantita = float(quantita)
+            prezzo_carico = float(prezzo_carico)
+            prezzo_vendita = float(prezzo_vendita)
+        except:
+            continue
+
         guadagno_netto = (prezzo_vendita - prezzo_carico) * quantita
 
         archivio.append({
