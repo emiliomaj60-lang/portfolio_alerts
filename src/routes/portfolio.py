@@ -266,22 +266,54 @@ def pagina_archivio_vendute():
     g = Github(os.environ["GITHUB_TOKEN"])
     repo = g.get_repo(GITHUB_REPO)
 
-    try:
-        file = repo.get_contents("data/archivio_az_vend.csv")
-        csv_text = base64.b64decode(file.content).decode("utf-8", errors="replace")
-    except Exception as e:
-        return f"<h1>ERRORE LETTURA FILE</h1><pre>{e}</pre>"
+    file = repo.get_contents("data/archivio_az_vend.csv")
+    csv_text = base64.b64decode(file.content).decode("utf-8", errors="replace")
 
     righe = csv_text.splitlines()
-
     archivio = []
+    totale_guadagni = 0
 
-    for riga in righe:
-        # split grezzo
+    for riga in righe[1:]:
         campi = riga.split(",")
-        archivio.append(campi)
 
-    return render_template("archivio_vendute.html", archivio=archivio)
+        while len(campi) < 15:
+            campi.append("")
+
+        nome = campi[2].strip()
+        quantita = campi[3].strip()
+        prezzo_carico = campi[4].strip()
+        data_acquisto = campi[5].strip()
+        data_vendita = campi[6].strip()
+        prezzo_vendita = campi[10].strip()
+
+        if not nome or not quantita or not prezzo_carico or not prezzo_vendita:
+            continue
+
+        try:
+            q = float(quantita)
+            pc = float(prezzo_carico)
+            pv = float(prezzo_vendita)
+        except:
+            continue
+
+        guadagno_netto = (pv - pc) * q
+        totale_guadagni += guadagno_netto
+
+        archivio.append({
+            "nome": nome,
+            "quantita": int(q),
+            "prezzo_carico": pc,
+            "data_acquisto": data_acquisto,
+            "data_vendita": data_vendita,
+            "prezzo_vendita": pv,
+            "guadagno_netto": round(guadagno_netto, 2)
+        })
+
+    return render_template(
+        "archivio_vendute.html",
+        archivio=archivio,
+        totale_guadagni=round(totale_guadagni, 2)
+    )
 
 # --- AGGIUNGI TITOLO (scrive su GitHub) ---
 @portfolio_bp.route("/gestione_portafoglio/add", methods=["POST"])
