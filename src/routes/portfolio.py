@@ -266,7 +266,6 @@ def pagina_archivio_vendute():
     g = Github(os.environ["GITHUB_TOKEN"])
     repo = g.get_repo(GITHUB_REPO)
 
-    # 🔥 Legge il CSV delle azioni vendute
     try:
         file = repo.get_contents("data/archivio_az_vend.csv")
         csv_text = base64.b64decode(file.content).decode("utf-8")
@@ -276,22 +275,38 @@ def pagina_archivio_vendute():
     righe = csv_text.splitlines()
 
     import csv
-    reader = csv.DictReader(righe)
+    reader = csv.reader(righe)
 
     archivio = []
 
-    for r in reader:
+    # 🔥 Salta header
+    next(reader, None)
 
-        # 🔥 Legge tutti i campi ma usa solo quelli richiesti
-        nome = r.get("nome", "").strip()
-        quantita = r.get("quantita", "").strip()
-        prezzo_carico = r.get("prezzo_carico", "").strip()
-        data_acquisto = r.get("data_acquisto", "").strip()
-        data_vendita = r.get("data_vendita", "").strip()
-        prezzo_vendita = r.get("prezzo_vendita", "").strip()
+    for campi in reader:
+        # Il CSV ha SEMPRE 15 colonne, anche se alcune sono vuote
+        if len(campi) < 15:
+            continue
 
-        # 🔥 Se uno dei campi fondamentali è vuoto → salta la riga
+        # 🔥 Leggi TUTTI i campi (anche vuoti)
+        isin = campi[0].strip()
+        symbol = campi[1].strip()
+        nome = campi[2].strip()
+        quantita = campi[3].strip()
+        prezzo_carico = campi[4].strip()
+        data_acquisto = campi[5].strip()
+        data_vendita = campi[6].strip()
+        costo_aq_banca = campi[7].strip()          # può essere ""
+        costo_aq_oper = campi[8].strip()           # può essere ""
+        costo_aq_varie = campi[9].strip()          # può essere ""
+        prezzo_vendita = campi[10].strip()
+        costo_ve_banca = campi[11].strip()         # può essere ""
+        costo_ve_oper = campi[12].strip()          # può essere ""
+        costo_ve_varie = campi[13].strip()         # può essere ""
+        dividendi = campi[14].strip()              # può essere ""
+
+        # 🔥 Usa SOLO i campi richiesti
         if not nome or not quantita or not prezzo_carico or not prezzo_vendita:
+            # Se uno dei campi fondamentali è vuoto → salta la riga
             continue
 
         try:
@@ -301,6 +316,7 @@ def pagina_archivio_vendute():
         except:
             continue
 
+        # 🔥 Calcolo guadagno netto
         guadagno_netto = (prezzo_vendita - prezzo_carico) * quantita
 
         archivio.append({
