@@ -72,22 +72,43 @@
 
 <body>
 
-<!-- 🔧 Bottone gestione portafoglio -->
-<div style="position:absolute; top:20px; right:20px; z-index:999;">
-    <a href="/gestione_portafoglio"
-       style="font-size:18px; padding:12px 18px; background:#19d244; color:rgb(26, 9, 9);
-              border-radius:8px; text-decoration:none;">
-    ⚙️ Gestisci
-    </a>
-</div>
+<!-- 🔵 Pulsanti superiori: Riepilogo / Archivio / Gestisci -->
+<div style="
+    position:absolute;
+    top:20px;
+    left:0;
+    right:0;
+    width:100%;
+    display:flex;
+    justify-content:center;
+    gap:40px;
+    z-index:999;
+">
 
-<!-- 🔵 Bottone riepilogo operazioni -->
-<div style="position:absolute; top:20px; left:20px; z-index:999;">
+    <!-- 📘 Riepilogo -->
     <a href="/riepilogo_operazioni"
-       style="font-size:18px; padding:12px 18px; background:#19d244; color:white;
+       style="font-size:18px; padding:12px 18px;
+              background:#19d244; color:white;
               border-radius:8px; text-decoration:none; font-weight:bold;">
         📘 Riepilogo
     </a>
+
+    <!-- 📁 Archivio Vendute -->
+    <a href="/archivio_vendute"
+       style="font-size:18px; padding:12px 18px;
+              background:#19d244; color:white;
+              border-radius:8px; text-decoration:none; font-weight:bold;">
+        📁 Archivio Vendute
+    </a>
+
+    <!-- ⚙️ Gestisci -->
+    <a href="/gestione_portafoglio"
+       style="font-size:18px; padding:12px 18px;
+              background:#19d244; color:white;
+              border-radius:8px; text-decoration:none; font-weight:bold;">
+        ⚙️ Gestisci
+    </a>
+
 </div>
 
 <div style="height:80px;"></div>
@@ -116,19 +137,6 @@
     </div>
 
     <div style="height:60px;"></div> <!-- RIGA VUOTA -->
-
-    <!-- 🔵 Bottone Archivio Azioni Vendute -->
-    <div class="center" style="margin-top:10px;">
-        <a href="/archivio_vendute"
-           style="font-size:22px; padding:14px 22px;
-                  background:#0d47a1; color:white;
-                  border-radius:10px; text-decoration:none;
-                  font-weight:bold; display:inline-block;">
-            📁 Archivio Azioni Vendute
-        </a>
-    </div>
-
-    <div style="height:40px;"></div>
 
     <!-- 🔵 TABELLA PORTAFOGLIO -->
     <table>
