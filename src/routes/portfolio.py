@@ -279,15 +279,14 @@ def pagina_archivio_vendute():
 
     archivio = []
 
-    # 🔥 Salta header
+    # salta header
     next(reader, None)
 
     for campi in reader:
-        # Il CSV ha SEMPRE 15 colonne, anche se alcune sono vuote
-        if len(campi) < 15:
-            continue
+        # porta sempre la riga a 15 colonne, riempiendo i vuoti
+        while len(campi) < 15:
+            campi.append("")
 
-        # 🔥 Leggi TUTTI i campi (anche vuoti)
         isin = campi[0].strip()
         symbol = campi[1].strip()
         nome = campi[2].strip()
@@ -295,37 +294,36 @@ def pagina_archivio_vendute():
         prezzo_carico = campi[4].strip()
         data_acquisto = campi[5].strip()
         data_vendita = campi[6].strip()
-        costo_aq_banca = campi[7].strip()          # può essere ""
-        costo_aq_oper = campi[8].strip()           # può essere ""
-        costo_aq_varie = campi[9].strip()          # può essere ""
+        # questi li leggiamo ma non li usiamo ora
+        costo_aq_banca = campi[7].strip()
+        costo_aq_oper = campi[8].strip()
+        costo_aq_varie = campi[9].strip()
         prezzo_vendita = campi[10].strip()
-        costo_ve_banca = campi[11].strip()         # può essere ""
-        costo_ve_oper = campi[12].strip()          # può essere ""
-        costo_ve_varie = campi[13].strip()         # può essere ""
-        dividendi = campi[14].strip()              # può essere ""
+        costo_ve_banca = campi[11].strip()
+        costo_ve_oper = campi[12].strip()
+        costo_ve_varie = campi[13].strip()
+        dividendi = campi[14].strip()
 
-        # 🔥 Usa SOLO i campi richiesti
         if not nome or not quantita or not prezzo_carico or not prezzo_vendita:
-            # Se uno dei campi fondamentali è vuoto → salta la riga
+            # se proprio manca uno di questi, saltiamo
             continue
 
         try:
-            quantita = float(quantita)
-            prezzo_carico = float(prezzo_carico)
-            prezzo_vendita = float(prezzo_vendita)
+            q = float(quantita)
+            pc = float(prezzo_carico)
+            pv = float(prezzo_vendita)
         except:
             continue
 
-        # 🔥 Calcolo guadagno netto
-        guadagno_netto = (prezzo_vendita - prezzo_carico) * quantita
+        guadagno_netto = (pv - pc) * q
 
         archivio.append({
             "nome": nome,
-            "quantita": int(quantita),
-            "prezzo_carico": prezzo_carico,
+            "quantita": int(q),
+            "prezzo_carico": pc,
             "data_acquisto": data_acquisto,
             "data_vendita": data_vendita,
-            "prezzo_vendita": prezzo_vendita,
+            "prezzo_vendita": pv,
             "guadagno_netto": round(guadagno_netto, 2)
         })
 
