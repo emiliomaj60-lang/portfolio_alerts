@@ -91,12 +91,12 @@
         Spese totali:
         <span style="color:#c62828;">{{ totale_spese }} €</span>
         <br>
-        Guadagno netto totale:
+        Guadagno totale:
         <span style="color:{% if totale_netto >= 0 %}#2e7d32{% else %}#c62828{% endif %};">
             {{ totale_netto }} €
         </span>
         <br>
-        Guadagno netto **dopo tasse (‑26%)**:
+        Guadagno netto meno tasse (26%):
         <span style="color:{% if totale_netto*0.74 >= 0 %}#2e7d32{% else %}#c62828{% endif %};">
             {{ (totale_netto * 0.74)|round(2) }} €
         </span>
